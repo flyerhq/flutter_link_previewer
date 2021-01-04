@@ -45,11 +45,13 @@ class _LinkPreviewState extends State<LinkPreview> {
             ? null
             : snapshot.data.image.width / snapshot.data.image.height;
 
+        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
+
         return _containerWidget(
           widget.width,
           aspectRatio == 1
               ? _minimizedBodyWidget(snapshot, widget.text)
-              : _bodyWidget(snapshot, widget.text, widget.width),
+              : _bodyWidget(snapshot, widget.text, width),
           withPadding: aspectRatio == 1,
         );
       },
@@ -91,7 +93,7 @@ class _LinkPreviewState extends State<LinkPreview> {
               ),
               if (snapshot.data.title != null)
                 Container(
-                  margin: EdgeInsets.only(top: 16.0),
+                  margin: EdgeInsets.only(top: 16),
                   child: _titleWidget(
                     snapshot.data.title,
                   ),
@@ -107,9 +109,8 @@ class _LinkPreviewState extends State<LinkPreview> {
           _imageWidget(
             snapshot.data.image.url,
             size: Size(
-                height: snapshot.data.image.width /
-                    snapshot.data.image.height *
-                    width,
+                height: (width / snapshot.data.image.width) *
+                    snapshot.data.image.height,
                 width: width),
           ),
       ],
@@ -171,7 +172,7 @@ class _LinkPreviewState extends State<LinkPreview> {
 
   Widget _descriptionWidget(String description) {
     return Container(
-      margin: EdgeInsets.only(top: 8.0),
+      margin: EdgeInsets.only(top: 8),
       child: Text(
         description,
         maxLines: 3,
@@ -181,26 +182,30 @@ class _LinkPreviewState extends State<LinkPreview> {
   }
 
   Widget _imageWidget(String url, {Size size}) {
+    print(url);
     return ClipRRect(
       borderRadius: size == null
           ? BorderRadius.all(
-              Radius.circular(4.0),
+              Radius.circular(4),
             )
           : BorderRadius.only(
-              bottomLeft: Radius.circular(12.0),
-              bottomRight: Radius.circular(12.0),
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
             ),
       child: Container(
         constraints: size != null
-            ? BoxConstraints(maxWidth: size.width, maxHeight: size.height)
+            ? BoxConstraints.tightFor(
+                width: size.width,
+                height: size.height,
+              )
             : null,
         height: size == null ? 48 : null,
         width: size == null ? 48 : null,
-        margin: size != null ? EdgeInsets.only(top: 8.0) : null,
+        margin: size != null ? EdgeInsets.only(top: 8) : null,
         color: Color(0xfff7f7f8),
         child: Image.network(
           url,
-          fit: BoxFit.cover,
+          fit: BoxFit.fitWidth,
         ),
       ),
     );
