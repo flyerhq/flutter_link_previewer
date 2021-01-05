@@ -150,7 +150,6 @@ class _LinkPreviewState extends State<LinkPreview> {
   }
 
   Widget _imageWidget(String url, {double width}) {
-    print(width);
     return ClipRRect(
       borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(12),
