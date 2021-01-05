@@ -29,35 +29,6 @@ class _LinkPreviewState extends State<LinkPreview> {
     _data = _fetchData(widget.text);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<PreviewData>(
-      initialData: PreviewData(),
-      future: _data,
-      builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Container();
-
-        if (widget.onPreviewDataFetched != null)
-          widget.onPreviewDataFetched(snapshot.data);
-
-        final aspectRatio = snapshot.data.image == null
-            ? null
-            : snapshot.data.image.width / snapshot.data.image.height;
-
-        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
-
-        return _containerWidget(
-          widget.width,
-          aspectRatio == 1
-              ? _minimizedBodyWidget(snapshot, widget.text)
-              : _bodyWidget(snapshot, widget.text, width),
-          withPadding: aspectRatio == 1,
-        );
-      },
-    );
-  }
-
   Future<PreviewData> _fetchData(String text) async {
     return await getPreviewData(text);
   }
@@ -108,10 +79,7 @@ class _LinkPreviewState extends State<LinkPreview> {
         if (snapshot.data.image?.url != null)
           _imageWidget(
             snapshot.data.image.url,
-            size: Size(
-                height: (width / snapshot.data.image.width) *
-                    snapshot.data.image.height,
-                width: width),
+            width: width,
           ),
       ],
     );
@@ -152,7 +120,7 @@ class _LinkPreviewState extends State<LinkPreview> {
                 ),
               ),
               if (snapshot.data.image?.url != null)
-                _imageWidget(snapshot.data.image.url),
+                _minimizedImageWidget(snapshot.data.image.url),
             ],
           ),
       ],
@@ -181,32 +149,68 @@ class _LinkPreviewState extends State<LinkPreview> {
     );
   }
 
-  Widget _imageWidget(String url, {Size size}) {
+  Widget _imageWidget(String url, {double width}) {
+    print(width);
     return ClipRRect(
-      borderRadius: size == null
-          ? BorderRadius.all(
-              Radius.circular(4),
-            )
-          : BorderRadius.only(
-              bottomLeft: Radius.circular(12),
-              bottomRight: Radius.circular(12),
-            ),
+      borderRadius: BorderRadius.only(
+        bottomLeft: Radius.circular(12),
+        bottomRight: Radius.circular(12),
+      ),
       child: Container(
-        constraints: size != null
-            ? BoxConstraints.tightFor(
-                width: size.width,
-                height: size.height,
-              )
-            : null,
-        height: size == null ? 48 : null,
-        width: size == null ? 48 : null,
-        margin: size != null ? EdgeInsets.only(top: 8) : null,
+        constraints: BoxConstraints(
+          maxHeight: width,
+        ),
+        width: width,
+        margin: EdgeInsets.only(top: 8),
         color: Color(0xfff7f7f8),
         child: Image.network(
           url,
           fit: BoxFit.fitWidth,
         ),
       ),
+    );
+  }
+
+  Widget _minimizedImageWidget(String url) {
+    return ClipRRect(
+      borderRadius: BorderRadius.all(
+        Radius.circular(4),
+      ),
+      child: Container(
+        height: 48,
+        width: 48,
+        color: Color(0xfff7f7f8),
+        child: Image.network(url),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<PreviewData>(
+      initialData: PreviewData(),
+      future: _data,
+      builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Container();
+
+        if (widget.onPreviewDataFetched != null)
+          widget.onPreviewDataFetched(snapshot.data);
+
+        final aspectRatio = snapshot.data.image == null
+            ? null
+            : snapshot.data.image.width / snapshot.data.image.height;
+
+        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
+
+        return _containerWidget(
+          widget.width,
+          aspectRatio == 1
+              ? _minimizedBodyWidget(snapshot, widget.text)
+              : _bodyWidget(snapshot, widget.text, width),
+          withPadding: aspectRatio == 1,
+        );
+      },
     );
   }
 }
