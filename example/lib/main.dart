@@ -43,7 +43,7 @@ class HomePage extends StatelessWidget {
               child: LinkPreview(
                 onPreviewDataFetched: _onPreviewDataFetched,
                 text:
-                    'https://www.archdaily.com/895215/vertical-ocean-maaps-archiects',
+                    'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
                 width: MediaQuery.of(context).size.width,
               ),
             ),
