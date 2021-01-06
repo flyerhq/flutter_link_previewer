@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_link_previewer/src/types.dart';
 import 'package:flutter_link_previewer/src/utils.dart';
+import 'package:flutter_link_previewer/src/url_linkifier.dart';
+import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
+import 'package:url_launcher/url_launcher.dart';
 
 class LinkPreview extends StatefulWidget {
   const LinkPreview({
@@ -33,17 +36,24 @@ class _LinkPreviewState extends State<LinkPreview> {
     return await getPreviewData(text);
   }
 
+  Future<void> _onOpen(LinkableElement link) async {
+    // print(link.url);
+    // print(link.text);
+    if (await canLaunch(link.url)) {
+      await launch(link.url);
+    } else {
+      throw 'Could not launch $link';
+    }
+  }
+
   Widget _containerWidget(double width, Widget child,
       {bool withPadding = false}) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-          constraints: BoxConstraints(maxWidth: width),
-          padding: withPadding
-              ? EdgeInsets.symmetric(vertical: 16, horizontal: 24)
-              : null,
-          child: child),
-    );
+    return Container(
+        constraints: BoxConstraints(maxWidth: width),
+        padding: withPadding
+            ? EdgeInsets.symmetric(vertical: 16, horizontal: 24)
+            : null,
+        child: child);
   }
 
   Widget _bodyWidget(
@@ -58,9 +68,16 @@ class _LinkPreviewState extends State<LinkPreview> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                text,
+              Linkify(
+                linkifiers: [UrlLinkifier()],
                 maxLines: 100,
+                onOpen: _onOpen,
+                options: LinkifyOptions(
+                  defaultToHttps: true,
+                  humanize: false,
+                  looseUrl: true,
+                ),
+                text: text,
               ),
               if (snapshot.data.title != null)
                 Container(
@@ -91,9 +108,16 @@ class _LinkPreviewState extends State<LinkPreview> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          text,
+        Linkify(
+          linkifiers: [UrlLinkifier()],
           maxLines: 100,
+          onOpen: _onOpen,
+          options: LinkifyOptions(
+            defaultToHttps: true,
+            humanize: false,
+            looseUrl: true,
+          ),
+          text: text,
         ),
         if (snapshot.data.title != null || snapshot.data.description != null)
           Row(
