@@ -37,8 +37,6 @@ class _LinkPreviewState extends State<LinkPreview> {
   }
 
   Future<void> _onOpen(LinkableElement link) async {
-    // print(link.url);
-    // print(link.text);
     if (await canLaunch(link.url)) {
       await launch(link.url);
     } else {
