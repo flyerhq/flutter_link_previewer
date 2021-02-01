@@ -8,15 +8,27 @@ import 'package:url_launcher/url_launcher.dart';
 class LinkPreview extends StatefulWidget {
   const LinkPreview({
     Key key,
+    this.linkStyle,
+    this.metedataTextStyle,
+    this.metedataTitleStyle,
     this.onPreviewDataFetched,
+    this.padding,
+    this.previewData,
     @required this.text,
+    this.textStyle,
     @required this.width,
   })  : assert(text != null),
         assert(width != null),
         super(key: key);
 
+  final TextStyle linkStyle;
+  final TextStyle metedataTextStyle;
+  final TextStyle metedataTitleStyle;
   final void Function(PreviewData) onPreviewDataFetched;
+  final EdgeInsets padding;
+  final PreviewData previewData;
   final String text;
+  final TextStyle textStyle;
   final double width;
 
   @override
@@ -29,6 +41,12 @@ class _LinkPreviewState extends State<LinkPreview> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.previewData != null) {
+      _data = Future<PreviewData>.value(widget.previewData);
+      return;
+    }
+
     _data = _fetchData(widget.text);
   }
 
@@ -44,14 +62,19 @@ class _LinkPreviewState extends State<LinkPreview> {
     }
   }
 
-  Widget _containerWidget(double width, Widget child,
-      {bool withPadding = false}) {
+  Widget _containerWidget(
+    double width,
+    Widget child, {
+    bool withPadding = false,
+  }) {
+    final padding =
+        widget.padding ?? EdgeInsets.symmetric(vertical: 16, horizontal: 24);
+
     return Container(
-        constraints: BoxConstraints(maxWidth: width),
-        padding: withPadding
-            ? EdgeInsets.symmetric(vertical: 16, horizontal: 24)
-            : null,
-        child: child);
+      constraints: BoxConstraints(maxWidth: width),
+      padding: withPadding ? padding : null,
+      child: child,
+    );
   }
 
   Widget _bodyWidget(
@@ -68,6 +91,7 @@ class _LinkPreviewState extends State<LinkPreview> {
             children: <Widget>[
               Linkify(
                 linkifiers: [UrlLinkifier()],
+                linkStyle: widget.linkStyle,
                 maxLines: 100,
                 onOpen: _onOpen,
                 options: LinkifyOptions(
@@ -76,6 +100,7 @@ class _LinkPreviewState extends State<LinkPreview> {
                   looseUrl: true,
                 ),
                 text: text,
+                style: widget.textStyle,
               ),
               if (snapshot.data.title != null)
                 Container(
@@ -108,6 +133,7 @@ class _LinkPreviewState extends State<LinkPreview> {
       children: [
         Linkify(
           linkifiers: [UrlLinkifier()],
+          linkStyle: widget.linkStyle,
           maxLines: 100,
           onOpen: _onOpen,
           options: LinkifyOptions(
@@ -116,6 +142,7 @@ class _LinkPreviewState extends State<LinkPreview> {
             looseUrl: true,
           ),
           text: text,
+          style: widget.textStyle,
         ),
         if (snapshot.data.title != null || snapshot.data.description != null)
           Row(
@@ -150,13 +177,14 @@ class _LinkPreviewState extends State<LinkPreview> {
   }
 
   Widget _titleWidget(String title) {
+    final style =
+        widget.metedataTitleStyle ?? TextStyle(fontWeight: FontWeight.bold);
+
     return Text(
       title,
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-      ),
+      style: style,
     );
   }
 
@@ -167,6 +195,7 @@ class _LinkPreviewState extends State<LinkPreview> {
         description,
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
+        style: widget.metedataTextStyle,
       ),
     );
   }
