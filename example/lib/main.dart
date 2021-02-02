@@ -35,16 +35,21 @@ class HomePage extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Color(0xFFf7f7f8),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
                 ),
+                color: Color(0xFFf7f7f8),
               ),
-              child: LinkPreview(
-                onPreviewDataFetched: _onPreviewDataFetched,
-                text:
-                    'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
-                width: MediaQuery.of(context).size.width,
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+                child: LinkPreview(
+                  onPreviewDataFetched: _onPreviewDataFetched,
+                  text:
+                      'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
             ),
             Container(

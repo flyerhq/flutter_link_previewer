@@ -9,8 +9,8 @@ class LinkPreview extends StatefulWidget {
   const LinkPreview({
     Key key,
     this.linkStyle,
-    this.metedataTextStyle,
-    this.metedataTitleStyle,
+    this.metadataTextStyle,
+    this.metadataTitleStyle,
     this.onPreviewDataFetched,
     this.padding,
     this.previewData,
@@ -22,8 +22,8 @@ class LinkPreview extends StatefulWidget {
         super(key: key);
 
   final TextStyle linkStyle;
-  final TextStyle metedataTextStyle;
-  final TextStyle metedataTitleStyle;
+  final TextStyle metadataTextStyle;
+  final TextStyle metadataTitleStyle;
   final void Function(PreviewData) onPreviewDataFetched;
   final EdgeInsets padding;
   final PreviewData previewData;
@@ -77,8 +77,7 @@ class _LinkPreviewState extends State<LinkPreview> {
     );
   }
 
-  Widget _bodyWidget(
-      AsyncSnapshot<PreviewData> snapshot, String text, double width) {
+  Widget _bodyWidget(PreviewData data, String text, double width) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,31 +101,30 @@ class _LinkPreviewState extends State<LinkPreview> {
                 text: text,
                 style: widget.textStyle,
               ),
-              if (snapshot.data.title != null)
+              if (data.title != null)
                 Container(
                   margin: EdgeInsets.only(top: 16),
                   child: _titleWidget(
-                    snapshot.data.title,
+                    data.title,
                   ),
                 ),
-              if (snapshot.data.description != null)
+              if (data.description != null)
                 _descriptionWidget(
-                  snapshot.data.description,
+                  data.description,
                 ),
             ],
           ),
         ),
-        if (snapshot.data.image?.url != null)
+        if (data.image?.url != null)
           _imageWidget(
-            snapshot.data.image.url,
+            data.image.url,
             width: width,
           ),
       ],
     );
   }
 
-  Widget _minimizedBodyWidget(
-      AsyncSnapshot<PreviewData> snapshot, String text) {
+  Widget _minimizedBodyWidget(PreviewData data, String text) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +142,7 @@ class _LinkPreviewState extends State<LinkPreview> {
           text: text,
           style: widget.textStyle,
         ),
-        if (snapshot.data.title != null || snapshot.data.description != null)
+        if (data.title != null || data.description != null)
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,20 +154,20 @@ class _LinkPreviewState extends State<LinkPreview> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (snapshot.data.title != null)
+                      if (data.title != null)
                         _titleWidget(
-                          snapshot.data.title,
+                          data.title,
                         ),
-                      if (snapshot.data.description != null)
+                      if (data.description != null)
                         _descriptionWidget(
-                          snapshot.data.description,
+                          data.description,
                         ),
                     ],
                   ),
                 ),
               ),
-              if (snapshot.data.image?.url != null)
-                _minimizedImageWidget(snapshot.data.image.url),
+              if (data.image?.url != null)
+                _minimizedImageWidget(data.image.url),
             ],
           ),
       ],
@@ -178,7 +176,7 @@ class _LinkPreviewState extends State<LinkPreview> {
 
   Widget _titleWidget(String title) {
     final style =
-        widget.metedataTitleStyle ?? TextStyle(fontWeight: FontWeight.bold);
+        widget.metadataTitleStyle ?? TextStyle(fontWeight: FontWeight.bold);
 
     return Text(
       title,
@@ -195,28 +193,21 @@ class _LinkPreviewState extends State<LinkPreview> {
         description,
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
-        style: widget.metedataTextStyle,
+        style: widget.metadataTextStyle,
       ),
     );
   }
 
   Widget _imageWidget(String url, {double width}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.only(
-        bottomLeft: Radius.circular(12),
-        bottomRight: Radius.circular(12),
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: width,
       ),
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: width,
-        ),
-        width: width,
-        margin: EdgeInsets.only(top: 8),
-        color: Color(0xfff7f7f8),
-        child: Image.network(
-          url,
-          fit: BoxFit.fitWidth,
-        ),
+      width: width,
+      margin: EdgeInsets.only(top: 8),
+      child: Image.network(
+        url,
+        fit: BoxFit.fitWidth,
       ),
     );
   }
@@ -229,7 +220,6 @@ class _LinkPreviewState extends State<LinkPreview> {
       child: Container(
         height: 48,
         width: 48,
-        color: Color(0xfff7f7f8),
         child: Image.network(url),
       ),
     );
@@ -256,8 +246,8 @@ class _LinkPreviewState extends State<LinkPreview> {
         return _containerWidget(
           widget.width,
           aspectRatio == 1
-              ? _minimizedBodyWidget(snapshot, widget.text)
-              : _bodyWidget(snapshot, widget.text, width),
+              ? _minimizedBodyWidget(snapshot.data, widget.text)
+              : _bodyWidget(snapshot.data, widget.text, width),
           withPadding: aspectRatio == 1,
         );
       },
