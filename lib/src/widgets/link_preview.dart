@@ -79,13 +79,11 @@ class _LinkPreviewState extends State<LinkPreview> {
 
   Widget _bodyWidget(PreviewData data, String text, double width) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Linkify(
@@ -102,11 +100,8 @@ class _LinkPreviewState extends State<LinkPreview> {
                 style: widget.textStyle,
               ),
               if (data.title != null)
-                Container(
-                  margin: EdgeInsets.only(top: 16),
-                  child: _titleWidget(
-                    data.title,
-                  ),
+                _titleWidget(
+                  data.title,
                 ),
               if (data.description != null)
                 _descriptionWidget(
@@ -126,7 +121,6 @@ class _LinkPreviewState extends State<LinkPreview> {
 
   Widget _minimizedBodyWidget(PreviewData data, String text) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Linkify(
@@ -144,14 +138,11 @@ class _LinkPreviewState extends State<LinkPreview> {
         ),
         if (data.title != null || data.description != null)
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(right: 4),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       if (data.title != null)
@@ -175,14 +166,18 @@ class _LinkPreviewState extends State<LinkPreview> {
   }
 
   Widget _titleWidget(String title) {
-    final style =
-        widget.metadataTitleStyle ?? TextStyle(fontWeight: FontWeight.bold);
-
-    return Text(
-      title,
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: style,
+    final style = widget.metadataTitleStyle ??
+        TextStyle(
+          fontWeight: FontWeight.bold,
+        );
+    return Container(
+      margin: EdgeInsets.only(top: 16),
+      child: Text(
+        title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: style,
+      ),
     );
   }
 

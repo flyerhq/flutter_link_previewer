@@ -21,6 +21,14 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
+  final style = TextStyle(
+    color: const Color(0xff1d1d21),
+    fontFamily: 'Avenir',
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    height: 1.375,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +38,6 @@ class HomePage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(16),

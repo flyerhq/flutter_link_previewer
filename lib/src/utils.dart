@@ -75,7 +75,7 @@ String _getActualImageUrl(String baseUrl, {String imageUrl}) {
 
   if (['svg', 'gif'].contains(imageUrl.fileExtension)) return null;
 
-  if (imageUrl.startsWith('//')) imageUrl = 'https:\'$imageUrl\'';
+  if (imageUrl.startsWith('//')) imageUrl = 'https:$imageUrl';
 
   if (!imageUrl.startsWith('http')) {
     if (baseUrl.endsWith('/') && imageUrl.startsWith('/')) {
@@ -141,10 +141,10 @@ Future<PreviewData> getPreviewData(String text) async {
     }
 
     final title = _getTitle(document);
-    previewData.title = title;
+    previewData.title = title.trim();
 
     final description = _getDescription(document);
-    previewData.description = description;
+    previewData.description = description.trim();
 
     final imageUrls = _getImageUrls(document, url);
 

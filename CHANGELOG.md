@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Critical fix and remove unneeded code
+
 ## 0.0.3
 
 - Code improvements and cleanup
