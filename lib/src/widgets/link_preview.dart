@@ -5,7 +5,8 @@ import 'package:flutter_link_previewer/src/url_linkifier.dart';
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
 import 'package:url_launcher/url_launcher.dart';
 
-class LinkPreview extends StatefulWidget {
+@immutable
+class LinkPreview extends StatelessWidget {
   const LinkPreview({
     Key key,
     this.linkStyle,
@@ -31,25 +32,6 @@ class LinkPreview extends StatefulWidget {
   final TextStyle textStyle;
   final double width;
 
-  @override
-  _LinkPreviewState createState() => _LinkPreviewState();
-}
-
-class _LinkPreviewState extends State<LinkPreview> {
-  Future<PreviewData> _data;
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.previewData != null) {
-      _data = Future<PreviewData>.value(widget.previewData);
-      return;
-    }
-
-    _data = _fetchData(widget.text);
-  }
-
   Future<PreviewData> _fetchData(String text) async {
     return await getPreviewData(text);
   }
@@ -67,12 +49,12 @@ class _LinkPreviewState extends State<LinkPreview> {
     Widget child, {
     bool withPadding = false,
   }) {
-    final padding =
-        widget.padding ?? EdgeInsets.symmetric(vertical: 16, horizontal: 24);
+    final _padding =
+        padding ?? EdgeInsets.symmetric(vertical: 16, horizontal: 24);
 
     return Container(
       constraints: BoxConstraints(maxWidth: width),
-      padding: withPadding ? padding : null,
+      padding: withPadding ? _padding : null,
       child: child,
     );
   }
@@ -88,7 +70,7 @@ class _LinkPreviewState extends State<LinkPreview> {
             children: <Widget>[
               Linkify(
                 linkifiers: [UrlLinkifier()],
-                linkStyle: widget.linkStyle,
+                linkStyle: linkStyle,
                 maxLines: 100,
                 onOpen: _onOpen,
                 options: LinkifyOptions(
@@ -97,7 +79,7 @@ class _LinkPreviewState extends State<LinkPreview> {
                   looseUrl: true,
                 ),
                 text: text,
-                style: widget.textStyle,
+                style: textStyle,
               ),
               if (data.title != null)
                 _titleWidget(
@@ -125,7 +107,7 @@ class _LinkPreviewState extends State<LinkPreview> {
       children: [
         Linkify(
           linkifiers: [UrlLinkifier()],
-          linkStyle: widget.linkStyle,
+          linkStyle: linkStyle,
           maxLines: 100,
           onOpen: _onOpen,
           options: LinkifyOptions(
@@ -134,7 +116,7 @@ class _LinkPreviewState extends State<LinkPreview> {
             looseUrl: true,
           ),
           text: text,
-          style: widget.textStyle,
+          style: textStyle,
         ),
         if (data.title != null || data.description != null)
           Row(
@@ -166,7 +148,7 @@ class _LinkPreviewState extends State<LinkPreview> {
   }
 
   Widget _titleWidget(String title) {
-    final style = widget.metadataTitleStyle ??
+    final style = metadataTitleStyle ??
         TextStyle(
           fontWeight: FontWeight.bold,
         );
@@ -188,7 +170,7 @@ class _LinkPreviewState extends State<LinkPreview> {
         description,
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
-        style: widget.metadataTextStyle,
+        style: metadataTextStyle,
       ),
     );
   }
@@ -222,10 +204,10 @@ class _LinkPreviewState extends State<LinkPreview> {
 
   Widget _plainTextWidget() {
     return _containerWidget(
-      widget.width,
+      width,
       Linkify(
         linkifiers: [UrlLinkifier()],
-        linkStyle: widget.linkStyle,
+        linkStyle: linkStyle,
         maxLines: 100,
         onOpen: _onOpen,
         options: LinkifyOptions(
@@ -233,8 +215,8 @@ class _LinkPreviewState extends State<LinkPreview> {
           humanize: false,
           looseUrl: true,
         ),
-        text: widget.text,
-        style: widget.textStyle,
+        text: text,
+        style: textStyle,
       ),
       withPadding: true,
     );
@@ -242,27 +224,30 @@ class _LinkPreviewState extends State<LinkPreview> {
 
   @override
   Widget build(BuildContext context) {
+    Future<PreviewData> _previewData = previewData != null
+        ? Future<PreviewData>.value(previewData)
+        : _fetchData(text);
+
     return FutureBuilder<PreviewData>(
-      initialData: PreviewData(),
-      future: _data,
+      initialData: null,
+      future: _previewData,
       builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting ||
             snapshot.hasError) return _plainTextWidget();
 
-        if (widget.onPreviewDataFetched != null)
-          widget.onPreviewDataFetched(snapshot.data);
+        if (onPreviewDataFetched != null) onPreviewDataFetched(snapshot.data);
 
         final aspectRatio = snapshot.data.image == null
             ? null
             : snapshot.data.image.width / snapshot.data.image.height;
 
-        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
+        final _width = aspectRatio == 1 ? width : width - 32;
 
         return _containerWidget(
-          widget.width,
+          width,
           aspectRatio == 1
-              ? _minimizedBodyWidget(snapshot.data, widget.text)
-              : _bodyWidget(snapshot.data, widget.text, width),
+              ? _minimizedBodyWidget(snapshot.data, text)
+              : _bodyWidget(snapshot.data, text, _width),
           withPadding: aspectRatio == 1,
         );
       },

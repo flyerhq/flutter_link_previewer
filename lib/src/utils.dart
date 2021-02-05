@@ -141,10 +141,14 @@ Future<PreviewData> getPreviewData(String text) async {
     }
 
     final title = _getTitle(document);
-    previewData.title = title.trim();
+    if (title != null) {
+      previewData.title = title.trim();
+    }
 
     final description = _getDescription(document);
-    previewData.description = description.trim();
+    if (description != null) {
+      previewData.description = description.trim();
+    }
 
     final imageUrls = _getImageUrls(document, url);
 

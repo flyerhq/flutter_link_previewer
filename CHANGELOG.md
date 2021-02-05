@@ -1,3 +1,7 @@
+## 0.0.6
+
+- Make widget stateless
+
 ## 0.0.5
 
 - Render plain text on loading and error
