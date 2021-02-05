@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Render plain text on loading and error
+
 ## 0.0.4
 
 - Critical fix and remove unneeded code

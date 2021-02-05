@@ -220,14 +220,34 @@ class _LinkPreviewState extends State<LinkPreview> {
     );
   }
 
+  Widget _plainTextWidget() {
+    return _containerWidget(
+      widget.width,
+      Linkify(
+        linkifiers: [UrlLinkifier()],
+        linkStyle: widget.linkStyle,
+        maxLines: 100,
+        onOpen: _onOpen,
+        options: LinkifyOptions(
+          defaultToHttps: true,
+          humanize: false,
+          looseUrl: true,
+        ),
+        text: widget.text,
+        style: widget.textStyle,
+      ),
+      withPadding: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<PreviewData>(
       initialData: PreviewData(),
       future: _data,
       builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting)
-          return Container();
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            snapshot.hasError) return _plainTextWidget();
 
         if (widget.onPreviewDataFetched != null)
           widget.onPreviewDataFetched(snapshot.data);
