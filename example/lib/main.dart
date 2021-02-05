@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
                 text: 'instagram.com',
                 width: MediaQuery.of(context).size.width,
               ),
-            )
+            ),
           ],
         ),
       ),
