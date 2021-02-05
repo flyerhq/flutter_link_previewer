@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Readme added
+
 ## 0.0.4
 
 - Critical fix and remove unneeded code
