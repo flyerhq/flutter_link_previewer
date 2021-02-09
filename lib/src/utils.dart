@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http show get;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:html/dom.dart' show Document, Element;
 import 'package:flutter_link_previewer/src/types.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart'
+    show PreviewData, PreviewDataImage;
 
 extension FileNameExtention on String {
   String get fileExtension {
@@ -123,6 +125,11 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
 Future<PreviewData> getPreviewData(String text) async {
   PreviewData previewData = PreviewData();
 
+  String previewDataUrl;
+  String previewDataTitle;
+  String previewDataDescription;
+  PreviewDataImage previewDataImage;
+
   try {
     final urlRegexp = new RegExp(REGEX_LINK);
     final matches = urlRegexp.allMatches(text.toLowerCase());
@@ -132,7 +139,7 @@ Future<PreviewData> getPreviewData(String text) async {
     if (!url.startsWith('http')) {
       url = 'https://' + url;
     }
-    previewData.link = url;
+    previewDataUrl = url;
     final response = await http.get(url);
     final document = parser.parse(response.body);
 
@@ -142,12 +149,12 @@ Future<PreviewData> getPreviewData(String text) async {
 
     final title = _getTitle(document);
     if (title != null) {
-      previewData.title = title.trim();
+      previewDataTitle = title.trim();
     }
 
     final description = _getDescription(document);
     if (description != null) {
-      previewData.description = description.trim();
+      previewDataDescription = description.trim();
     }
 
     final imageUrls = _getImageUrls(document, url);
@@ -161,13 +168,26 @@ Future<PreviewData> getPreviewData(String text) async {
           : await _getBiggestImageUrl(imageUrls);
 
       imageSize = await _getImageSize(imageUrl);
-      previewData.image = PreviewDataImage(
-          height: imageSize.height, url: imageUrl, width: imageSize.width);
+      previewDataImage = PreviewDataImage(
+        height: imageSize.height,
+        url: imageUrl,
+        width: imageSize.width,
+      );
     }
-    return previewData;
+    return PreviewData(
+      description: previewDataDescription,
+      image: previewDataImage,
+      link: previewDataUrl,
+      title: previewDataTitle,
+    );
   } catch (e) {
     print(e);
-    return previewData;
+    return PreviewData(
+      description: previewDataDescription,
+      image: previewDataImage,
+      link: previewDataUrl,
+      title: previewDataTitle,
+    );
   }
 }
 

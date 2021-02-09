@@ -1,3 +1,7 @@
+## 0.0.7
+
+- Use types from utility library
+
 ## 0.0.6
 
 - Make widget stateless

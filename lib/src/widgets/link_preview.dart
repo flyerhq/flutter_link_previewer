@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_link_previewer/src/types.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:flutter_link_previewer/src/utils.dart';
 import 'package:flutter_link_previewer/src/url_linkifier.dart';
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
