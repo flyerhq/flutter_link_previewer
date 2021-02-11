@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Dependency update
+
 ## 0.0.7
 
 - Use types from utility library
