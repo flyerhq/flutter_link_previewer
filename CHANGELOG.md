@@ -1,3 +1,7 @@
+## 0.0.9
+
+- Readme added
+
 ## 0.0.8
 
 - Dependency update
