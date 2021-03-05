@@ -1,11 +1,11 @@
 name: flutter_link_previewer
 description: Flutter Link Previewer
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/flyerhq/flutter_link_previewer
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.17.0 <2.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
@@ -21,6 +21,7 @@ dependencies:
   url_launcher: ^6.0.2
 
 dev_dependencies:
+  pedantic: ^1.11.0
   flutter_test:
     sdk: flutter
 

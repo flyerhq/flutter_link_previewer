@@ -69,7 +69,7 @@ class LinkPreview extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Linkify(
-                linkifiers: [const UrlLinkifier()],
+                linkifiers: [UrlLinkifier()],
                 linkStyle: linkStyle,
                 maxLines: 100,
                 onOpen: _onOpen,
@@ -106,7 +106,7 @@ class LinkPreview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Linkify(
-          linkifiers: [const UrlLinkifier()],
+          linkifiers: [UrlLinkifier()],
           linkStyle: linkStyle,
           maxLines: 100,
           onOpen: _onOpen,
@@ -206,7 +206,7 @@ class LinkPreview extends StatelessWidget {
     return _containerWidget(
       width,
       Linkify(
-        linkifiers: [const UrlLinkifier()],
+        linkifiers: [UrlLinkifier()],
         linkStyle: linkStyle,
         maxLines: 100,
         onOpen: _onOpen,
@@ -224,7 +224,7 @@ class LinkPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Future<PreviewData> _previewData = previewData != null
+    final _previewData = previewData != null
         ? Future<PreviewData>.value(previewData)
         : _fetchData(text);
 

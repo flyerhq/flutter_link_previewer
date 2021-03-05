@@ -19,7 +19,7 @@ final _protocolIdentifierRegex = RegExp(
 );
 
 class UrlLinkifier extends Linkifier {
-  const UrlLinkifier();
+  UrlLinkifier();
 
   @override
   List<LinkifyElement> parse(elements, options) {

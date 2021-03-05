@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart' hide Element;
 import 'package:http/http.dart' as http show get;
 import 'package:html/parser.dart' as parser show parse;
-import 'package:html/dom.dart' show Document, Element;
+import 'package:html/dom.dart' show Document;
 import 'package:flutter_link_previewer/src/types.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
@@ -15,7 +15,7 @@ extension FileNameExtention on String {
 
 String _getMetaContent(Document document, String propertyValue) {
   final meta = document.getElementsByTagName('meta');
-  Element element = meta.firstWhere(
+  var element = meta.firstWhere(
       (e) => e.attributes['property'] == propertyValue,
       orElse: () => null);
   element ??= meta.firstWhere((e) => e.attributes['name'] == propertyValue,
@@ -49,8 +49,8 @@ String _getDescription(Document document) {
 
 List<String> _getImageUrls(Document document, String baseUrl) {
   final meta = document.getElementsByTagName('meta');
-  String attribute = 'content';
-  List<Element> elements = meta
+  var attribute = 'content';
+  var elements = meta
       .where((e) =>
           e.attributes['property'] == 'og:image' ||
           e.attributes['property'] == 'twitter:image')
@@ -69,8 +69,9 @@ List<String> _getImageUrls(Document document, String baseUrl) {
 }
 
 String _getActualImageUrl(String baseUrl, {String imageUrl}) {
-  if (imageUrl == null || imageUrl.isEmpty || imageUrl.startsWith('data'))
+  if (imageUrl == null || imageUrl.isEmpty || imageUrl.startsWith('data')) {
     return null;
+  }
 
   if (['svg', 'gif'].contains(imageUrl.fileExtension)) return null;
 
@@ -105,7 +106,7 @@ Future<Size> _getImageSize(String url) {
 
 Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
   String currentUrl;
-  double currentArea = 0.0;
+  var currentArea = 0.0;
 
   await Future.forEach(imageUrls, (String url) async {
     final size = await _getImageSize(url);
@@ -132,7 +133,7 @@ Future<PreviewData> getPreviewData(String text) async {
     final matches = urlRegexp.allMatches(text.toLowerCase());
     if (matches.isEmpty) return previewData;
 
-    String url = text.substring(matches.first.start, matches.first.end);
+    var url = text.substring(matches.first.start, matches.first.end);
     if (!url.startsWith('http')) {
       url = 'https://' + url;
     }

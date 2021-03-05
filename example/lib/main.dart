@@ -3,10 +3,13 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({
+    Key key,
+  }) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -16,40 +19,36 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  final style = TextStyle(
-    color: const Color(0xff1d1d21),
-    fontFamily: 'Avenir',
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    height: 1.375,
-  );
+  const HomePage({
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Example'),
+        title: const Text('Example'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              margin: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
                 ),
                 color: Color(0xFFf7f7f8),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.all(
+                borderRadius: const BorderRadius.all(
                   Radius.circular(10),
                 ),
                 child: LinkPreview(
@@ -61,8 +60,8 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Container(
-              margin: EdgeInsets.all(16),
-              decoration: BoxDecoration(
+              margin: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
                 color: Color(0xFFf7f7f8),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),

@@ -1,3 +1,7 @@
+## 0.2.0
+
+- Flutter 2 update
+
 ## 0.1.0
 
 - Dependency update
