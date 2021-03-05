@@ -12,13 +12,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.0
-  html: ^0.14.0+4
-  http: ^0.12.2
+  html: ^0.15.0
+  http: ^0.13.0
   flutter_chat_types: ^1.1.1
   flutter_linkify: ^4.0.2
   linkify: ^3.0.0
   meta: ^1.2.4
-  url_launcher: ^5.7.10
+  url_launcher: ^6.0.2
 
 dev_dependencies:
   flutter_test:

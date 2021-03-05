@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart' hide Element;
 import 'dart:async';
-
+import 'package:flutter/material.dart' hide Element;
 import 'package:http/http.dart' as http show get;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:html/dom.dart' show Document, Element;
@@ -10,7 +9,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart'
 
 extension FileNameExtention on String {
   String get fileExtension {
-    return this?.split("/")?.last?.split('.')?.last;
+    return this?.split('/')?.last?.split('.')?.last;
   }
 }
 
@@ -19,10 +18,8 @@ String _getMetaContent(Document document, String propertyValue) {
   Element element = meta.firstWhere(
       (e) => e.attributes['property'] == propertyValue,
       orElse: () => null);
-  if (element == null) {
-    element = meta.firstWhere((e) => e.attributes['name'] == propertyValue,
-        orElse: () => null);
-  }
+  element ??= meta.firstWhere((e) => e.attributes['name'] == propertyValue,
+      orElse: () => null);
   if (element != null) return element.attributes['content']?.trim();
   return null;
 }
@@ -93,16 +90,16 @@ String _getActualImageUrl(String baseUrl, {String imageUrl}) {
 }
 
 Future<Size> _getImageSize(String url) {
-  Image image = new Image.network(url);
-  Completer<Size> completer = new Completer<Size>();
-  ImageStreamListener listener = new ImageStreamListener(
+  final image = Image.network(url);
+  final completer = Completer<Size>();
+  final listener = ImageStreamListener(
     (ImageInfo info, bool _) => completer.complete(
       Size(
           height: info.image.height.toDouble(),
           width: info.image.width.toDouble()),
     ),
   );
-  image.image.resolve(new ImageConfiguration()).addListener(listener);
+  image.image.resolve(ImageConfiguration.empty).addListener(listener);
   return completer.future;
 }
 
@@ -110,7 +107,7 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
   String currentUrl;
   double currentArea = 0.0;
 
-  await Future.forEach(imageUrls, (url) async {
+  await Future.forEach(imageUrls, (String url) async {
     final size = await _getImageSize(url);
     final area = size.width * size.height;
     if (area > currentArea) {
@@ -123,7 +120,7 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
 }
 
 Future<PreviewData> getPreviewData(String text) async {
-  PreviewData previewData = PreviewData();
+  final previewData = PreviewData();
 
   String previewDataUrl;
   String previewDataTitle;
@@ -131,7 +128,7 @@ Future<PreviewData> getPreviewData(String text) async {
   PreviewDataImage previewDataImage;
 
   try {
-    final urlRegexp = new RegExp(REGEX_LINK);
+    final urlRegexp = RegExp(REGEX_LINK);
     final matches = urlRegexp.allMatches(text.toLowerCase());
     if (matches.isEmpty) return previewData;
 
@@ -140,7 +137,8 @@ Future<PreviewData> getPreviewData(String text) async {
       url = 'https://' + url;
     }
     previewDataUrl = url;
-    final response = await http.get(url);
+    final uri = Uri.parse(url);
+    final response = await http.get(uri);
     final document = parser.parse(response.body);
 
     if (!_hasUTF8Charset(document)) {
