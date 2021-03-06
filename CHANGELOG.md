@@ -1,3 +1,7 @@
+## 0.2.2
+
+- Update to null safety
+
 ## 0.2.1
 
 - Code cleanup

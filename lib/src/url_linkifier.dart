@@ -30,15 +30,15 @@ class UrlLinkifier extends Linkifier {
         var loose = false;
         var match = _urlRegex.firstMatch(element.text);
 
-        if (match != null && match.group(1).isNotEmpty) {
-          final looseMatch = _looseUrlRegex.firstMatch(match.group(1));
+        if (match?.group(1)?.isNotEmpty == true) {
+          final looseMatch = _looseUrlRegex.firstMatch(match!.group(1)!);
           if (looseMatch != null) {
             match = looseMatch;
             loose = true;
           }
         }
 
-        if (match == null && options.looseUrl ?? false) {
+        if (match == null && options.looseUrl) {
           match = _looseUrlRegex.firstMatch(element.text);
           loose = true;
         }
@@ -46,17 +46,17 @@ class UrlLinkifier extends Linkifier {
         if (match == null) {
           list.add(element);
         } else {
-          final text = element.text.replaceFirst(match.group(0), '');
+          final text = element.text.replaceFirst(match.group(0)!, '');
 
-          if (match.group(1).isNotEmpty) {
-            list.add(TextElement(match.group(1)));
+          if (match.group(1)?.isNotEmpty == true) {
+            list.add(TextElement(match.group(1)!));
           }
 
-          if (match.group(2).isNotEmpty) {
-            var originalUrl = match.group(2);
-            String end;
+          if (match.group(2)?.isNotEmpty == true) {
+            var originalUrl = match.group(2)!;
+            String? end;
 
-            if ((options.excludeLastPeriod ?? false) &&
+            if (options.excludeLastPeriod &&
                 originalUrl[originalUrl.length - 1] == '.') {
               end = '.';
               originalUrl = originalUrl.substring(0, originalUrl.length - 1);
@@ -65,15 +65,16 @@ class UrlLinkifier extends Linkifier {
             final url = originalUrl;
 
             if (loose || !originalUrl.startsWith(_protocolIdentifierRegex)) {
-              originalUrl =
-                  (options.defaultToHttps ?? false ? 'https://' : 'http://') +
-                      originalUrl;
+              originalUrl = (options.defaultToHttps ? 'https://' : 'http://') +
+                  originalUrl;
             }
 
-            list.add(UrlElement(
-              originalUrl,
-              url,
-            ));
+            list.add(
+              UrlElement(
+                originalUrl,
+                url,
+              ),
+            );
 
             if (end != null) {
               list.add(TextElement(end));
@@ -96,7 +97,7 @@ class UrlLinkifier extends Linkifier {
 /// Represents an element containing a link
 @immutable
 class UrlElement extends LinkableElement {
-  UrlElement(String url, [String text]) : super(text, url);
+  UrlElement(String url, [String? text]) : super(text, url);
 
   @override
   String toString() {
@@ -110,5 +111,6 @@ class UrlElement extends LinkableElement {
   bool equals(other) => other is UrlElement && super.equals(other);
 
   @override
+  // ignore: unnecessary_overrides
   int get hashCode => super.hashCode;
 }

@@ -2,37 +2,42 @@ import 'dart:async';
 import 'package:flutter/material.dart' hide Element;
 import 'package:flutter_chat_types/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
-import 'package:html/dom.dart' show Document;
+import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
 import 'types.dart';
 
 extension FileNameExtention on String {
   String get fileExtension {
-    return this?.split('/')?.last?.split('.')?.last;
+    return split('/').last.split('.').last;
   }
 }
 
-String _getMetaContent(Document document, String propertyValue) {
+String? _getMetaContent(Document document, String propertyValue) {
   final meta = document.getElementsByTagName('meta');
-  var element = meta.firstWhere(
-      (e) => e.attributes['property'] == propertyValue,
-      orElse: () => null);
-  element ??= meta.firstWhere((e) => e.attributes['name'] == propertyValue,
-      orElse: () => null);
-  if (element != null) return element.attributes['content']?.trim();
-  return null;
+  final element = meta.firstWhere(
+    (e) => e.attributes['property'] == propertyValue,
+    orElse: () => meta.firstWhere(
+      (e) => e.attributes['name'] == propertyValue,
+      orElse: () => Element.tag(null),
+    ),
+  );
+
+  return element.attributes['content']?.trim();
 }
 
 bool _hasUTF8Charset(Document document) {
+  final emptyElement = Element.tag(null);
   final meta = document.getElementsByTagName('meta');
-  final element = meta.firstWhere((e) => e.attributes.containsKey('charset'),
-      orElse: () => null);
-  if (element == null) return true;
-  return element.attributes['charset'].toLowerCase() == 'utf-8';
+  final element = meta.firstWhere(
+    (e) => e.attributes.containsKey('charset'),
+    orElse: () => emptyElement,
+  );
+  if (element == emptyElement) return true;
+  return element.attributes['charset']!.toLowerCase() == 'utf-8';
 }
 
-String _getTitle(Document document) {
+String? _getTitle(Document document) {
   final titleElements = document.getElementsByTagName('title');
   if (titleElements.isNotEmpty) return titleElements.first.text;
 
@@ -41,7 +46,7 @@ String _getTitle(Document document) {
       _getMetaContent(document, 'og:site_name');
 }
 
-String _getDescription(Document document) {
+String? _getDescription(Document document) {
   return _getMetaContent(document, 'og:description') ??
       _getMetaContent(document, 'description') ??
       _getMetaContent(document, 'twitter:description');
@@ -51,24 +56,31 @@ List<String> _getImageUrls(Document document, String baseUrl) {
   final meta = document.getElementsByTagName('meta');
   var attribute = 'content';
   var elements = meta
-      .where((e) =>
-          e.attributes['property'] == 'og:image' ||
-          e.attributes['property'] == 'twitter:image')
+      .where(
+        (e) =>
+            e.attributes['property'] == 'og:image' ||
+            e.attributes['property'] == 'twitter:image',
+      )
       .toList();
+
   if (elements.isEmpty) {
     elements = document.getElementsByTagName('img');
     attribute = 'src';
   }
-  final urlList = elements
-      .map(
-        (e) => _getActualImageUrl(baseUrl,
-            imageUrl: e.attributes[attribute]?.trim()),
-      )
-      .toList();
-  return urlList.where((element) => element != null).toList();
+
+  return elements.fold<List<String>>([], (previousValue, element) {
+    final actualImageUrl = _getActualImageUrl(
+      baseUrl,
+      element.attributes[attribute]?.trim(),
+    );
+
+    return actualImageUrl != null
+        ? [...previousValue, actualImageUrl]
+        : previousValue;
+  });
 }
 
-String _getActualImageUrl(String baseUrl, {String imageUrl}) {
+String? _getActualImageUrl(String baseUrl, String? imageUrl) {
   if (imageUrl == null || imageUrl.isEmpty || imageUrl.startsWith('data')) {
     return null;
   }
@@ -96,8 +108,9 @@ Future<Size> _getImageSize(String url) {
   final listener = ImageStreamListener(
     (ImageInfo info, bool _) => completer.complete(
       Size(
-          height: info.image.height.toDouble(),
-          width: info.image.width.toDouble()),
+        height: info.image.height.toDouble(),
+        width: info.image.width.toDouble(),
+      ),
     ),
   );
   image.image.resolve(ImageConfiguration.empty).addListener(listener);
@@ -105,7 +118,7 @@ Future<Size> _getImageSize(String url) {
 }
 
 Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
-  String currentUrl;
+  var currentUrl = imageUrls[0];
   var currentArea = 0.0;
 
   await Future.forEach(imageUrls, (String url) async {
@@ -123,10 +136,10 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
 Future<PreviewData> getPreviewData(String text) async {
   const previewData = PreviewData();
 
-  String previewDataUrl;
-  String previewDataTitle;
-  String previewDataDescription;
-  PreviewDataImage previewDataImage;
+  String? previewDataDescription;
+  PreviewDataImage? previewDataImage;
+  String? previewDataTitle;
+  String? previewDataUrl;
 
   try {
     final urlRegexp = RegExp(REGEX_LINK);
