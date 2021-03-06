@@ -18,9 +18,13 @@ final _protocolIdentifierRegex = RegExp(
   caseSensitive: false,
 );
 
+/// Utility class that implements [Linkifier.parse] method.
+/// Used to find links in the text.
 class UrlLinkifier extends Linkifier {
+  /// Default constructor
   UrlLinkifier();
 
+  /// Parses text to find all links inside it
   @override
   List<LinkifyElement> parse(elements, options) {
     final list = <LinkifyElement>[];
@@ -97,6 +101,7 @@ class UrlLinkifier extends Linkifier {
 /// Represents an element containing a link
 @immutable
 class UrlElement extends LinkableElement {
+  /// Creates [UrlElement]
   UrlElement(String url, [String? text]) : super(text, url);
 
   @override

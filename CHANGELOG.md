@@ -1,3 +1,7 @@
+## 1.0.0
+
+- Add documentation
+
 ## 0.2.2
 
 - Update to null safety

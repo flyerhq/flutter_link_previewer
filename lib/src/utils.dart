@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http show get;
 import 'types.dart';
 
 extension FileNameExtention on String {
+  /// Returns the last part of the path string after the . char
   String get fileExtension {
     return split('/').last.split('.').last;
   }
@@ -133,6 +134,7 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
   return currentUrl;
 }
 
+/// Parses provided text and returns [PreviewData] for the first found link
 Future<PreviewData> getPreviewData(String text) async {
   const previewData = PreviewData();
 
@@ -202,4 +204,5 @@ Future<PreviewData> getPreviewData(String text) async {
   }
 }
 
+/// Regex to find all links in the text
 const REGEX_LINK = r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+';

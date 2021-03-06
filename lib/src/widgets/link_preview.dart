@@ -5,8 +5,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../url_linkifier.dart' show UrlLinkifier;
 import '../utils.dart' show getPreviewData;
 
+/// A widget that renders text with highlighted links.
+/// Eventually unwraps to the full preview of the first found link
+/// if the parsing was successful.
 @immutable
 class LinkPreview extends StatelessWidget {
+  /// Creates [LinkPreview]
   const LinkPreview({
     Key? key,
     this.linkStyle,
@@ -20,14 +24,35 @@ class LinkPreview extends StatelessWidget {
     required this.width,
   }) : super(key: key);
 
+  /// Style of highlighted links in the text
   final TextStyle? linkStyle;
+
+  /// Style of preview's description
   final TextStyle? metadataTextStyle;
+
+  /// Style of preview's title
   final TextStyle? metadataTitleStyle;
+
+  /// Callback which is called when [PreviewData] was successfully parsed.
+  /// Use it to save [PreviewData] to the state and pass it back
+  /// to the [LinkPreview.previewData] so the [LinkPreview] would not fetch
+  /// preview data again.
   final void Function(PreviewData)? onPreviewDataFetched;
+
+  /// Padding around initial text widget
   final EdgeInsets? padding;
+
+  /// Pass saved [PreviewData] here so [LinkPreview] would not fetch preview
+  /// data again
   final PreviewData? previewData;
+
+  /// Text used for parsing
   final String text;
+
+  /// Style of the provided text
   final TextStyle? textStyle;
+
+  /// Width of the [LinkPreview] widget
   final double width;
 
   Future<PreviewData> _fetchData(String text) async {
