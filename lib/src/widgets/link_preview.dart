@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
-import 'package:flutter_link_previewer/src/utils.dart';
-import 'package:flutter_link_previewer/src/url_linkifier.dart';
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
 import 'package:url_launcher/url_launcher.dart';
+import '../url_linkifier.dart' show UrlLinkifier;
+import '../utils.dart' show getPreviewData;
 
 @immutable
 class LinkPreview extends StatelessWidget {
@@ -73,7 +73,7 @@ class LinkPreview extends StatelessWidget {
                 linkStyle: linkStyle,
                 maxLines: 100,
                 onOpen: _onOpen,
-                options: LinkifyOptions(
+                options: const LinkifyOptions(
                   defaultToHttps: true,
                   humanize: false,
                   looseUrl: true,
@@ -110,7 +110,7 @@ class LinkPreview extends StatelessWidget {
           linkStyle: linkStyle,
           maxLines: 100,
           onOpen: _onOpen,
-          options: LinkifyOptions(
+          options: const LinkifyOptions(
             defaultToHttps: true,
             humanize: false,
             looseUrl: true,
@@ -210,7 +210,7 @@ class LinkPreview extends StatelessWidget {
         linkStyle: linkStyle,
         maxLines: 100,
         onOpen: _onOpen,
-        options: LinkifyOptions(
+        options: const LinkifyOptions(
           defaultToHttps: true,
           humanize: false,
           looseUrl: true,

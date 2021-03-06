@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart' hide Element;
-import 'package:http/http.dart' as http show get;
-import 'package:html/parser.dart' as parser show parse;
-import 'package:html/dom.dart' show Document;
-import 'package:flutter_link_previewer/src/types.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
+import 'package:html/dom.dart' show Document;
+import 'package:html/parser.dart' as parser show parse;
+import 'package:http/http.dart' as http show get;
+import 'types.dart';
 
 extension FileNameExtention on String {
   String get fileExtension {
@@ -121,7 +121,7 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
 }
 
 Future<PreviewData> getPreviewData(String text) async {
-  final previewData = PreviewData();
+  const previewData = PreviewData();
 
   String previewDataUrl;
   String previewDataTitle;
@@ -180,7 +180,6 @@ Future<PreviewData> getPreviewData(String text) async {
       title: previewDataTitle,
     );
   } catch (e) {
-    print(e);
     return PreviewData(
       description: previewDataDescription,
       image: previewDataImage,

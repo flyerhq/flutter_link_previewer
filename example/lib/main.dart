@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 
 void main() {
@@ -7,9 +6,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({
-    Key key,
-  }) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -17,17 +15,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const HomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({
-    Key key,
-  }) : super(key: key);
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +47,6 @@ class HomePage extends StatelessWidget {
                   Radius.circular(10),
                 ),
                 child: LinkPreview(
-                  onPreviewDataFetched: _onPreviewDataFetched,
                   text:
                       'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
                   width: MediaQuery.of(context).size.width,
@@ -68,7 +62,6 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               child: LinkPreview(
-                onPreviewDataFetched: _onPreviewDataFetched,
                 text: 'instagram.com',
                 width: MediaQuery.of(context).size.width,
               ),
@@ -77,9 +70,5 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _onPreviewDataFetched(PreviewData previewData) {
-    print(previewData.link);
   }
 }
