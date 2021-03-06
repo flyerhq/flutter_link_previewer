@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
-import 'package:flutter_link_previewer/src/utils.dart';
-import 'package:flutter_link_previewer/src/url_linkifier.dart';
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
 import 'package:url_launcher/url_launcher.dart';
+import '../url_linkifier.dart' show UrlLinkifier;
+import '../utils.dart' show getPreviewData;
 
 @immutable
 class LinkPreview extends StatelessWidget {
@@ -50,7 +50,7 @@ class LinkPreview extends StatelessWidget {
     bool withPadding = false,
   }) {
     final _padding =
-        padding ?? EdgeInsets.symmetric(vertical: 16, horizontal: 24);
+        padding ?? const EdgeInsets.symmetric(vertical: 16, horizontal: 24);
 
     return Container(
       constraints: BoxConstraints(maxWidth: width),
@@ -64,7 +64,7 @@ class LinkPreview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -73,7 +73,7 @@ class LinkPreview extends StatelessWidget {
                 linkStyle: linkStyle,
                 maxLines: 100,
                 onOpen: _onOpen,
-                options: LinkifyOptions(
+                options: const LinkifyOptions(
                   defaultToHttps: true,
                   humanize: false,
                   looseUrl: true,
@@ -110,7 +110,7 @@ class LinkPreview extends StatelessWidget {
           linkStyle: linkStyle,
           maxLines: 100,
           onOpen: _onOpen,
-          options: LinkifyOptions(
+          options: const LinkifyOptions(
             defaultToHttps: true,
             humanize: false,
             looseUrl: true,
@@ -123,7 +123,7 @@ class LinkPreview extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(right: 4),
+                  margin: const EdgeInsets.only(right: 4),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -149,11 +149,11 @@ class LinkPreview extends StatelessWidget {
 
   Widget _titleWidget(String title) {
     final style = metadataTitleStyle ??
-        TextStyle(
+        const TextStyle(
           fontWeight: FontWeight.bold,
         );
     return Container(
-      margin: EdgeInsets.only(top: 16),
+      margin: const EdgeInsets.only(top: 16),
       child: Text(
         title,
         maxLines: 2,
@@ -165,7 +165,7 @@ class LinkPreview extends StatelessWidget {
 
   Widget _descriptionWidget(String description) {
     return Container(
-      margin: EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: 8),
       child: Text(
         description,
         maxLines: 3,
@@ -181,7 +181,7 @@ class LinkPreview extends StatelessWidget {
         maxHeight: width,
       ),
       width: width,
-      margin: EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: 8),
       child: Image.network(
         url,
         fit: BoxFit.fitWidth,
@@ -191,10 +191,10 @@ class LinkPreview extends StatelessWidget {
 
   Widget _minimizedImageWidget(String url) {
     return ClipRRect(
-      borderRadius: BorderRadius.all(
+      borderRadius: const BorderRadius.all(
         Radius.circular(4),
       ),
-      child: Container(
+      child: SizedBox(
         height: 48,
         width: 48,
         child: Image.network(url),
@@ -210,7 +210,7 @@ class LinkPreview extends StatelessWidget {
         linkStyle: linkStyle,
         maxLines: 100,
         onOpen: _onOpen,
-        options: LinkifyOptions(
+        options: const LinkifyOptions(
           defaultToHttps: true,
           humanize: false,
           looseUrl: true,
@@ -224,7 +224,7 @@ class LinkPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<PreviewData> _previewData = previewData != null
+    final _previewData = previewData != null
         ? Future<PreviewData>.value(previewData)
         : _fetchData(text);
 

@@ -1,4 +1,5 @@
 import 'package:linkify/linkify.dart';
+import 'package:meta/meta.dart';
 
 final _urlRegex = RegExp(
   r'^(.*?)((?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*)',
@@ -18,7 +19,7 @@ final _protocolIdentifierRegex = RegExp(
 );
 
 class UrlLinkifier extends Linkifier {
-  const UrlLinkifier();
+  UrlLinkifier();
 
   @override
   List<LinkifyElement> parse(elements, options) {
@@ -30,7 +31,7 @@ class UrlLinkifier extends Linkifier {
         var match = _urlRegex.firstMatch(element.text);
 
         if (match != null && match.group(1).isNotEmpty) {
-          var looseMatch = _looseUrlRegex.firstMatch(match.group(1));
+          final looseMatch = _looseUrlRegex.firstMatch(match.group(1));
           if (looseMatch != null) {
             match = looseMatch;
             loose = true;
@@ -56,16 +57,16 @@ class UrlLinkifier extends Linkifier {
             String end;
 
             if ((options.excludeLastPeriod ?? false) &&
-                originalUrl[originalUrl.length - 1] == ".") {
-              end = ".";
+                originalUrl[originalUrl.length - 1] == '.') {
+              end = '.';
               originalUrl = originalUrl.substring(0, originalUrl.length - 1);
             }
 
-            var url = originalUrl;
+            final url = originalUrl;
 
             if (loose || !originalUrl.startsWith(_protocolIdentifierRegex)) {
               originalUrl =
-                  (options.defaultToHttps ?? false ? "https://" : "http://") +
+                  (options.defaultToHttps ?? false ? 'https://' : 'http://') +
                       originalUrl;
             }
 
@@ -93,6 +94,7 @@ class UrlLinkifier extends Linkifier {
 }
 
 /// Represents an element containing a link
+@immutable
 class UrlElement extends LinkableElement {
   UrlElement(String url, [String text]) : super(text, url);
 
