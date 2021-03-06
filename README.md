@@ -1,6 +1,6 @@
 # Flutter Link Previewer
 
-URL preview with basic customization and ability to render from cached data.
+Preview of the link extracted from the provided text with basic customization and ability to render from cached data.
 
 <img src="https://user-images.githubusercontent.com/14123304/110205826-88bb0580-7e7a-11eb-8101-b12e83ce0787.PNG" width="320" height="693">
 
