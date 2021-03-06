@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Code cleanup
+
 ## 0.2.0
 
 - Flutter 2 update

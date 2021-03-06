@@ -1,15 +1,15 @@
-# Flutter Link Preview
+# Flutter Link Previewer
 
-URL preview with basic customization and ability to render from cached data
+URL preview with basic customization and ability to render from cached data.
 
-![Demo](images/flutter_link_previewer.png)
+<img src="https://user-images.githubusercontent.com/14123304/110205826-88bb0580-7e7a-11eb-8101-b12e83ce0787.PNG" width="320" height="693">
 
 ## Getting Started
 
 ```dart
 LinkPreview(
   onPreviewDataFetched: _onPreviewDataFetched,
-  text: 'instagram.com',
+  text: 'https://github.com/flyerhq',
   width: MediaQuery.of(context).size.width,
 )
 ```
@@ -39,7 +39,7 @@ LinkPreview(
     vertical: 16,
   ),
   onPreviewDataFetched: _onPreviewDataFetched,
-  text: "Your text with link here",
+  text: 'https://github.com/flyerhq',
   textStyle: style,
   width: width,
 );
@@ -47,12 +47,12 @@ LinkPreview(
 
 ## Render from cached data
 
-Store data you get in `onPreviewDataFetched` callback, then
+Store the data you receive from `onPreviewDataFetched` callback, then
 
 ```dart
 LinkPreview(
   previewData: _cachedData,
-  text: 'instagram.com',
+  text: 'https://github.com/flyerhq',
   width: MediaQuery.of(context).size.width,
 )
 ```

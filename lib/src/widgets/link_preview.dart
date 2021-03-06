@@ -192,7 +192,7 @@ class LinkPreview extends StatelessWidget {
   Widget _minimizedImageWidget(String url) {
     return ClipRRect(
       borderRadius: const BorderRadius.all(
-        Radius.circular(4),
+        Radius.circular(12),
       ),
       child: SizedBox(
         height: 48,

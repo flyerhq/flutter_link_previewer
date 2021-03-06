@@ -29,6 +29,7 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        brightness: Brightness.dark,
         title: const Text('Example'),
       ),
       body: SingleChildScrollView(
@@ -38,17 +39,16 @@ class MyHomePage extends StatelessWidget {
               margin: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+                  Radius.circular(20),
                 ),
-                color: Color(0xFFf7f7f8),
+                color: Color(0xfff7f7f8),
               ),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(10),
+                  Radius.circular(20),
                 ),
                 child: LinkPreview(
-                  text:
-                      'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
+                  text: 'https://github.com/flyerhq',
                   width: MediaQuery.of(context).size.width,
                 ),
               ),
@@ -56,14 +56,20 @@ class MyHomePage extends StatelessWidget {
             Container(
               margin: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
-                color: Color(0xFFf7f7f8),
+                color: Color(0xfff7f7f8),
                 borderRadius: BorderRadius.all(
-                  Radius.circular(10),
+                  Radius.circular(20),
                 ),
               ),
-              child: LinkPreview(
-                text: 'instagram.com',
-                width: MediaQuery.of(context).size.width,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
+                ),
+                child: LinkPreview(
+                  text:
+                      'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
             ),
           ],
