@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Add CI
+
 ## 1.0.0
 
 - Add documentation

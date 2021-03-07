@@ -1,5 +1,10 @@
 # Flutter Link Previewer
 
+[![Pub](https://img.shields.io/pub/v/flutter_link_previewer)](https://pub.dartlang.org/packages/flutter_link_previewer)
+[![build](https://github.com/flyerhq/flutter_link_previewer/workflows/build/badge.svg)](https://github.com/flyerhq/flutter_link_previewer/actions?query=workflow%3Abuild)
+[![CodeFactor](https://www.codefactor.io/repository/github/flyerhq/flutter_link_previewer/badge)](https://www.codefactor.io/repository/github/flyerhq/flutter_link_previewer)
+[![pub points](https://badges.bar/sentry/pub%20points)](https://pub.dev/packages/flutter_link_previewer/score)
+
 Preview of the link extracted from the provided text with basic customization and ability to render from cached data.
 
 <img src="https://user-images.githubusercontent.com/14123304/110205826-88bb0580-7e7a-11eb-8101-b12e83ce0787.PNG" width="320" height="693">
