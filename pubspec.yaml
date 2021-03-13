@@ -2,7 +2,7 @@ name: flutter_link_previewer
 description: >
   Preview of the link extracted from the provided text
   with basic customization and ability to render from cached data.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/flyerhq/flutter_link_previewer
 
 environment:
@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  flutter_chat_types: ^2.0.2
+  flutter_chat_types: ^2.0.4
   flutter_linkify: ^5.0.0
   html: ^0.15.0
   http: ^0.13.0
