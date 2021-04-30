@@ -9,9 +9,11 @@ import '../utils.dart' show getPreviewData;
 /// Eventually unwraps to the full preview of the first found link
 /// if the parsing was successful.
 @immutable
-class LinkPreview extends StatelessWidget {
+class LinkPreview extends StatefulWidget {
   /// Creates [LinkPreview]
   const LinkPreview({
+    this.animationDuration,
+    this.enableAnimation = false,
     Key? key,
     this.linkStyle,
     this.metadataTextStyle,
@@ -23,6 +25,12 @@ class LinkPreview extends StatelessWidget {
     this.textStyle,
     required this.width,
   }) : super(key: key);
+
+  /// Expanding animation duration
+  final Duration? animationDuration;
+
+  /// Enables expanding animation
+  final bool? enableAnimation;
 
   /// Style of highlighted links in the text
   final TextStyle? linkStyle;
@@ -55,6 +63,28 @@ class LinkPreview extends StatelessWidget {
   /// Width of the [LinkPreview] widget
   final double width;
 
+  @override
+  _LinkPreviewState createState() => _LinkPreviewState();
+}
+
+class _LinkPreviewState extends State<LinkPreview>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: widget.animationDuration ?? const Duration(seconds: 1),
+    vsync: this,
+  )..forward();
+
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.fastOutSlowIn,
+  );
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   Future<PreviewData> _fetchData(String text) async {
     return await getPreviewData(text);
   }
@@ -67,28 +97,28 @@ class LinkPreview extends StatelessWidget {
     }
   }
 
+  Widget _animated(Widget child) {
+    return SizeTransition(
+      sizeFactor: _animation,
+      axis: Axis.vertical,
+      axisAlignment: -1,
+      child: child,
+    );
+  }
+
   Widget _bodyWidget(PreviewData data, String text, double width) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          padding: const EdgeInsets.only(
+            bottom: 16,
+            left: 24,
+            right: 24,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Linkify(
-                linkifiers: [UrlLinkifier()],
-                linkStyle: linkStyle,
-                maxLines: 100,
-                onOpen: _onOpen,
-                options: const LinkifyOptions(
-                  defaultToHttps: true,
-                  humanize: false,
-                  looseUrl: true,
-                ),
-                text: text,
-                style: textStyle,
-              ),
               if (data.title != null) _titleWidget(data.title!),
               if (data.description != null)
                 _descriptionWidget(data.description!),
@@ -101,20 +131,43 @@ class LinkPreview extends StatelessWidget {
   }
 
   Widget _containerWidget({
-    required double width,
+    required bool animate,
+    Widget? child,
     bool withPadding = false,
-    required Widget child,
   }) {
-    final _padding = padding ??
+    final _padding = widget.padding ??
         const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 16,
         );
 
+    final shouldAnimate = widget.enableAnimation ?? animate;
+
     return Container(
-      constraints: BoxConstraints(maxWidth: width),
+      constraints: BoxConstraints(maxWidth: widget.width),
       padding: withPadding ? _padding : null,
-      child: child,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: withPadding
+                ? const EdgeInsets.all(0)
+                : const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+            child: Column(
+              children: [
+                _linkify(),
+                if (withPadding && child != null)
+                  shouldAnimate ? _animated(child) : child,
+              ],
+            ),
+          ),
+          if (!withPadding && child != null)
+            shouldAnimate ? _animated(child) : child,
+        ],
+      ),
     );
   }
 
@@ -125,7 +178,7 @@ class LinkPreview extends StatelessWidget {
         description,
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
-        style: metadataTextStyle,
+        style: widget.metadataTextStyle,
       ),
     );
   }
@@ -144,23 +197,26 @@ class LinkPreview extends StatelessWidget {
     );
   }
 
+  Widget _linkify() {
+    return Linkify(
+      linkifiers: [UrlLinkifier()],
+      linkStyle: widget.linkStyle,
+      maxLines: 100,
+      onOpen: _onOpen,
+      options: const LinkifyOptions(
+        defaultToHttps: true,
+        humanize: false,
+        looseUrl: true,
+      ),
+      text: widget.text,
+      style: widget.textStyle,
+    );
+  }
+
   Widget _minimizedBodyWidget(PreviewData data, String text) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Linkify(
-          linkifiers: [UrlLinkifier()],
-          linkStyle: linkStyle,
-          maxLines: 100,
-          onOpen: _onOpen,
-          options: const LinkifyOptions(
-            defaultToHttps: true,
-            humanize: false,
-            looseUrl: true,
-          ),
-          text: text,
-          style: textStyle,
-        ),
         if (data.title != null || data.description != null)
           Row(
             children: <Widget>[
@@ -170,7 +226,8 @@ class LinkPreview extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (data.title != null) _titleWidget(data.title!),
+                      if (data.title != null)
+                        _titleWidget(data.title!, withMargin: true),
                       if (data.description != null)
                         _descriptionWidget(data.description!),
                     ],
@@ -198,34 +255,14 @@ class LinkPreview extends StatelessWidget {
     );
   }
 
-  Widget _plainTextWidget() {
-    return _containerWidget(
-      width: width,
-      withPadding: true,
-      child: Linkify(
-        linkifiers: [UrlLinkifier()],
-        linkStyle: linkStyle,
-        maxLines: 100,
-        onOpen: _onOpen,
-        options: const LinkifyOptions(
-          defaultToHttps: true,
-          humanize: false,
-          looseUrl: true,
-        ),
-        text: text,
-        style: textStyle,
-      ),
-    );
-  }
-
-  Widget _titleWidget(String title) {
-    final style = metadataTitleStyle ??
+  Widget _titleWidget(String title, {bool withMargin = false}) {
+    final style = widget.metadataTitleStyle ??
         const TextStyle(
           fontWeight: FontWeight.bold,
         );
 
     return Container(
-      margin: const EdgeInsets.only(top: 16),
+      margin: withMargin ? const EdgeInsets.only(top: 16) : null,
       child: Text(
         title,
         maxLines: 2,
@@ -237,9 +274,9 @@ class LinkPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _previewData = previewData != null
-        ? Future<PreviewData>.value(previewData!)
-        : _fetchData(text);
+    final _previewData = widget.previewData != null
+        ? Future<PreviewData>.value(widget.previewData!)
+        : _fetchData(widget.text);
 
     return FutureBuilder<PreviewData>(
       initialData: null,
@@ -247,22 +284,22 @@ class LinkPreview extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting ||
             snapshot.hasError ||
-            snapshot.data == null) return _plainTextWidget();
+            snapshot.data == null) return _containerWidget(animate: false);
 
-        onPreviewDataFetched?.call(snapshot.data!);
+        widget.onPreviewDataFetched?.call(snapshot.data!);
 
         final aspectRatio = snapshot.data!.image == null
             ? null
             : snapshot.data!.image!.width / snapshot.data!.image!.height;
 
-        final _width = aspectRatio == 1 ? width : width - 32;
+        final _width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
         return _containerWidget(
-          width: width,
-          withPadding: aspectRatio == 1,
+          animate: widget.previewData == null,
           child: aspectRatio == 1
-              ? _minimizedBodyWidget(snapshot.data!, text)
-              : _bodyWidget(snapshot.data!, text, _width),
+              ? _minimizedBodyWidget(snapshot.data!, widget.text)
+              : _bodyWidget(snapshot.data!, widget.text, _width),
+          withPadding: aspectRatio == 1,
         );
       },
     );
