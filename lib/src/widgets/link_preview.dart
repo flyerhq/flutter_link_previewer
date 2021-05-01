@@ -12,9 +12,9 @@ import '../utils.dart' show getPreviewData;
 class LinkPreview extends StatefulWidget {
   /// Creates [LinkPreview]
   const LinkPreview({
+    Key? key,
     this.animationDuration,
     this.enableAnimation = false,
-    Key? key,
     this.linkStyle,
     this.metadataTextStyle,
     this.metadataTitleStyle,
@@ -26,10 +26,10 @@ class LinkPreview extends StatefulWidget {
     required this.width,
   }) : super(key: key);
 
-  /// Expanding animation duration
+  /// Expand animation duration
   final Duration? animationDuration;
 
-  /// Enables expanding animation
+  /// Enables expand animation. Default value is false.
   final bool? enableAnimation;
 
   /// Style of highlighted links in the text
@@ -70,23 +70,35 @@ class LinkPreview extends StatefulWidget {
 class _LinkPreviewState extends State<LinkPreview>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: widget.animationDuration ?? const Duration(seconds: 1),
+    duration: widget.animationDuration ?? const Duration(milliseconds: 300),
     vsync: this,
   )..forward();
 
   late final Animation<double> _animation = CurvedAnimation(
     parent: _controller,
-    curve: Curves.fastOutSlowIn,
+    curve: Curves.easeOutQuad,
   );
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   Future<PreviewData> _fetchData(String text) async {
-    return await getPreviewData(text);
+    final previewData = await getPreviewData(text);
+    _handlePreviewDataFetched(previewData);
+    return previewData;
+  }
+
+  void _handlePreviewDataFetched(PreviewData previewData) {
+    Future.delayed(
+      widget.animationDuration ?? const Duration(milliseconds: 300),
+    ).then((_) {
+      if (mounted) {
+        widget.onPreviewDataFetched?.call(previewData);
+      }
+    });
   }
 
   Future<void> _onOpen(LinkableElement link) async {
@@ -99,9 +111,9 @@ class _LinkPreviewState extends State<LinkPreview>
 
   Widget _animated(Widget child) {
     return SizeTransition(
-      sizeFactor: _animation,
       axis: Axis.vertical,
       axisAlignment: -1,
+      sizeFactor: _animation,
       child: child,
     );
   }
@@ -132,8 +144,8 @@ class _LinkPreviewState extends State<LinkPreview>
 
   Widget _containerWidget({
     required bool animate,
-    Widget? child,
     bool withPadding = false,
+    Widget? child,
   }) {
     final _padding = widget.padding ??
         const EdgeInsets.symmetric(
@@ -141,7 +153,7 @@ class _LinkPreviewState extends State<LinkPreview>
           vertical: 16,
         );
 
-    final shouldAnimate = widget.enableAnimation ?? animate;
+    final shouldAnimate = widget.enableAnimation == true && animate;
 
     return Container(
       constraints: BoxConstraints(maxWidth: widget.width),
@@ -157,6 +169,7 @@ class _LinkPreviewState extends State<LinkPreview>
                     vertical: 16,
                   ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _linkify(),
                 if (withPadding && child != null)
@@ -279,14 +292,10 @@ class _LinkPreviewState extends State<LinkPreview>
         : _fetchData(widget.text);
 
     return FutureBuilder<PreviewData>(
-      initialData: null,
+      initialData: widget.previewData,
       future: _previewData,
       builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            snapshot.hasError ||
-            snapshot.data == null) return _containerWidget(animate: false);
-
-        widget.onPreviewDataFetched?.call(snapshot.data!);
+        if (snapshot.data == null) return _containerWidget(animate: false);
 
         final aspectRatio = snapshot.data!.image == null
             ? null
