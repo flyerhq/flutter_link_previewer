@@ -34,6 +34,7 @@ class MyHomePage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               margin: const EdgeInsets.all(16),
@@ -48,7 +49,8 @@ class MyHomePage extends StatelessWidget {
                   Radius.circular(20),
                 ),
                 child: LinkPreview(
-                  text: 'https://github.com/flyerhq',
+                  enableAnimation: true,
+                  text: 'https://flyer.chat',
                   width: MediaQuery.of(context).size.width,
                 ),
               ),
@@ -66,8 +68,8 @@ class MyHomePage extends StatelessWidget {
                   Radius.circular(20),
                 ),
                 child: LinkPreview(
-                  text:
-                      'https://dev.to/demchenkoalex/making-a-right-keyboard-accessory-view-in-react-native-4n3p',
+                  enableAnimation: true,
+                  text: 'https://github.com/flyerhq',
                   width: MediaQuery.of(context).size.width,
                 ),
               ),

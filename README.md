@@ -6,7 +6,7 @@
 
 Preview of the link extracted from the provided text with basic customization and ability to render from cached data.
 
-<img src="https://user-images.githubusercontent.com/14123304/110205826-88bb0580-7e7a-11eb-8101-b12e83ce0787.PNG" width="320" height="693">
+<img src="https://user-images.githubusercontent.com/14123304/116777066-81743a80-aa6c-11eb-89bc-d4166c418878.png" width="428" height="926">
 
 ## Getting Started
 
