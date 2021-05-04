@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 
 void main() {
   runApp(const MyApp());
@@ -21,8 +22,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  Map<String, PreviewData> datas = {};
+
+  List<String> get urls => const [
+        'https://flyer.chat',
+        'github.com/flyerhq',
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -32,49 +45,36 @@ class MyHomePage extends StatelessWidget {
         brightness: Brightness.dark,
         title: const Text('Example'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                ),
-                color: Color(0xfff7f7f8),
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(20),
-                ),
-                child: LinkPreview(
-                  enableAnimation: true,
-                  text: 'https://flyer.chat',
-                  width: MediaQuery.of(context).size.width,
-                ),
-              ),
+      body: ListView.builder(
+        itemCount: urls.length,
+        itemBuilder: (context, index) => Container(
+          key: ValueKey(urls[index]),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(
+              Radius.circular(20),
             ),
-            Container(
-              margin: const EdgeInsets.all(16),
-              decoration: const BoxDecoration(
-                color: Color(0xfff7f7f8),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(20),
-                ),
-                child: LinkPreview(
-                  enableAnimation: true,
-                  text: 'https://github.com/flyerhq',
-                  width: MediaQuery.of(context).size.width,
-                ),
-              ),
+            color: Color(0xfff7f7f8),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(20),
             ),
-          ],
+            child: LinkPreview(
+              enableAnimation: true,
+              onPreviewDataFetched: (data) {
+                setState(() {
+                  datas = {
+                    ...datas,
+                    urls[index]: data,
+                  };
+                });
+              },
+              previewData: datas[urls[index]],
+              text: urls[index],
+              width: MediaQuery.of(context).size.width,
+            ),
+          ),
         ),
       ),
     );
