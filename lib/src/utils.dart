@@ -7,13 +7,6 @@ import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
 import 'types.dart';
 
-extension FileNameExtention on String {
-  /// Returns the last part of the path string after the . char
-  String get fileExtension {
-    return split('/').last.split('.').last;
-  }
-}
-
 String? _getMetaContent(Document document, String propertyValue) {
   final meta = document.getElementsByTagName('meta');
   final element = meta.firstWhere(
@@ -86,7 +79,7 @@ String? _getActualImageUrl(String baseUrl, String? imageUrl) {
     return null;
   }
 
-  if (['svg', 'gif'].contains(imageUrl.fileExtension)) return null;
+  if (imageUrl.contains('.svg') || imageUrl.contains('.gif')) return null;
 
   if (imageUrl.startsWith('//')) imageUrl = 'https:$imageUrl';
 
@@ -107,6 +100,8 @@ Future<Size> _getImageSize(String url) {
   final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
   final completer = Completer<Size>();
 
+  void onError(Object _, StackTrace? __) {}
+
   void listener(ImageInfo info, bool _) {
     if (!completer.isCompleted) {
       completer.complete(
@@ -115,11 +110,11 @@ Future<Size> _getImageSize(String url) {
           width: info.image.width.toDouble(),
         ),
       );
-      stream.removeListener(ImageStreamListener(listener));
+      stream.removeListener(ImageStreamListener(listener, onError: onError));
     }
   }
 
-  stream.addListener(ImageStreamListener(listener));
+  stream.addListener(ImageStreamListener(listener, onError: onError));
   return completer.future;
 }
 

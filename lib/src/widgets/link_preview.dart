@@ -231,25 +231,28 @@ class _LinkPreviewState extends State<LinkPreview>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (data.title != null || data.description != null)
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(right: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      if (data.title != null)
-                        _titleWidget(data.title!, withMargin: true),
-                      if (data.description != null)
-                        _descriptionWidget(data.description!),
-                    ],
+          Container(
+            margin: const EdgeInsets.only(top: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        if (data.title != null) _titleWidget(data.title!),
+                        if (data.description != null)
+                          _descriptionWidget(data.description!),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              if (data.image?.url != null)
-                _minimizedImageWidget(data.image!.url),
-            ],
+                if (data.image?.url != null)
+                  _minimizedImageWidget(data.image!.url),
+              ],
+            ),
           ),
       ],
     );
@@ -268,20 +271,17 @@ class _LinkPreviewState extends State<LinkPreview>
     );
   }
 
-  Widget _titleWidget(String title, {bool withMargin = false}) {
+  Widget _titleWidget(String title) {
     final style = widget.metadataTitleStyle ??
         const TextStyle(
           fontWeight: FontWeight.bold,
         );
 
-    return Container(
-      margin: withMargin ? const EdgeInsets.only(top: 16) : null,
-      child: Text(
-        title,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: style,
-      ),
+    return Text(
+      title,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: style,
     );
   }
 

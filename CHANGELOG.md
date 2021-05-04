@@ -1,3 +1,7 @@
+## 1.0.6
+
+- Fix warnings and layout issues
+
 ## 1.0.5
 
 - Add an optional animation
