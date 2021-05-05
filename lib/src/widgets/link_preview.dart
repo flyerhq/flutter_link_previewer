@@ -18,9 +18,9 @@ class LinkPreview extends StatefulWidget {
     this.linkStyle,
     this.metadataTextStyle,
     this.metadataTitleStyle,
-    this.onPreviewDataFetched,
+    required this.onPreviewDataFetched,
     this.padding,
-    this.previewData,
+    required this.previewData,
     required this.text,
     this.textStyle,
     required this.width,
@@ -45,7 +45,7 @@ class LinkPreview extends StatefulWidget {
   /// Use it to save [PreviewData] to the state and pass it back
   /// to the [LinkPreview.previewData] so the [LinkPreview] would not fetch
   /// preview data again.
-  final void Function(PreviewData)? onPreviewDataFetched;
+  final void Function(PreviewData) onPreviewDataFetched;
 
   /// Padding around initial text widget
   final EdgeInsets? padding;
@@ -72,12 +72,43 @@ class _LinkPreviewState extends State<LinkPreview>
   late final AnimationController _controller = AnimationController(
     duration: widget.animationDuration ?? const Duration(milliseconds: 300),
     vsync: this,
-  )..forward();
+  );
 
   late final Animation<double> _animation = CurvedAnimation(
     parent: _controller,
     curve: Curves.easeOutQuad,
   );
+
+  bool isFetchingPreviewData = false;
+  bool shouldAnimate = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    didUpdateWidget(widget);
+  }
+
+  @override
+  void didUpdateWidget(covariant LinkPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!isFetchingPreviewData && widget.previewData == null) {
+      _fetchData(widget.text);
+    }
+
+    if (widget.previewData != null && oldWidget.previewData == null) {
+      setState(() {
+        shouldAnimate = true;
+      });
+      _controller.reset();
+      _controller.forward();
+    } else if (widget.previewData != null) {
+      setState(() {
+        shouldAnimate = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -86,19 +117,26 @@ class _LinkPreviewState extends State<LinkPreview>
   }
 
   Future<PreviewData> _fetchData(String text) async {
+    setState(() {
+      isFetchingPreviewData = true;
+    });
+
     final previewData = await getPreviewData(text);
     _handlePreviewDataFetched(previewData);
     return previewData;
   }
 
-  void _handlePreviewDataFetched(PreviewData previewData) {
-    Future.delayed(
+  void _handlePreviewDataFetched(PreviewData previewData) async {
+    await Future.delayed(
       widget.animationDuration ?? const Duration(milliseconds: 300),
-    ).then((_) {
-      if (mounted) {
-        widget.onPreviewDataFetched?.call(previewData);
-      }
-    });
+    );
+
+    if (mounted) {
+      widget.onPreviewDataFetched(previewData);
+      setState(() {
+        isFetchingPreviewData = false;
+      });
+    }
   }
 
   Future<void> _onOpen(LinkableElement link) async {
@@ -287,30 +325,23 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
-    final _previewData = widget.previewData != null
-        ? Future<PreviewData>.value(widget.previewData!)
-        : _fetchData(widget.text);
+    if (widget.previewData != null) {
+      final aspectRatio = widget.previewData!.image == null
+          ? null
+          : widget.previewData!.image!.width /
+              widget.previewData!.image!.height;
 
-    return FutureBuilder<PreviewData>(
-      initialData: widget.previewData,
-      future: _previewData,
-      builder: (BuildContext context, AsyncSnapshot<PreviewData> snapshot) {
-        if (snapshot.data == null) return _containerWidget(animate: false);
+      final _width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
-        final aspectRatio = snapshot.data!.image == null
-            ? null
-            : snapshot.data!.image!.width / snapshot.data!.image!.height;
-
-        final _width = aspectRatio == 1 ? widget.width : widget.width - 32;
-
-        return _containerWidget(
-          animate: widget.previewData == null,
-          child: aspectRatio == 1
-              ? _minimizedBodyWidget(snapshot.data!, widget.text)
-              : _bodyWidget(snapshot.data!, widget.text, _width),
-          withPadding: aspectRatio == 1,
-        );
-      },
-    );
+      return _containerWidget(
+        animate: shouldAnimate,
+        child: aspectRatio == 1
+            ? _minimizedBodyWidget(widget.previewData!, widget.text)
+            : _bodyWidget(widget.previewData!, widget.text, _width),
+        withPadding: aspectRatio == 1,
+      );
+    } else {
+      return _containerWidget(animate: false);
+    }
   }
 }
