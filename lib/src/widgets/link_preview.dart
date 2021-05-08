@@ -161,17 +161,27 @@ class _LinkPreviewState extends State<LinkPreview>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.only(
-            bottom: 16,
-            left: 24,
-            right: 24,
-          ),
+          padding: widget.padding?.subtract(
+                EdgeInsets.only(
+                  bottom: widget.padding?.bottom ?? 0,
+                  top: widget.padding?.top ?? 0,
+                ),
+              ) ??
+              const EdgeInsets.only(
+                bottom: 16,
+                left: 24,
+                right: 24,
+              ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (data.title != null) _titleWidget(data.title!),
               if (data.description != null)
                 _descriptionWidget(data.description!),
+              if (data.title != null && data.description != null)
+                const SizedBox(
+                  height: 8,
+                )
             ],
           ),
         ),
@@ -202,14 +212,16 @@ class _LinkPreviewState extends State<LinkPreview>
           Padding(
             padding: withPadding
                 ? const EdgeInsets.all(0)
-                : const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
+                : EdgeInsets.only(
+                    left: _padding.left,
+                    right: _padding.right,
+                    top: _padding.top,
+                    bottom: 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _linkify(),
+                const SizedBox(height: 12),
                 if (withPadding && child != null)
                   shouldAnimate ? _animated(child) : child,
               ],
@@ -240,7 +252,12 @@ class _LinkPreviewState extends State<LinkPreview>
         maxHeight: width,
       ),
       width: width,
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(
+        top: 8,
+        // bottom: widget.padding?.bottom ?? 0,
+        // left: widget.padding?.left ?? 0,
+        // right: widget.padding?.right ?? 0,
+      ),
       child: Image.network(
         url,
         fit: BoxFit.fitWidth,
