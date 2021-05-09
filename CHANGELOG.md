@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Fix custom padding and add a custom link press handler
+
 ## 2.0.0
 
 - **BREAKING**: `onPreviewDataFetched` and `previewData` are now required. In the previous version, a link preview used on a ListView resulted in a fetch call every time the preview was appearing on a screen.
