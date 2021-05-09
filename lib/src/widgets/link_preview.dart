@@ -18,13 +18,13 @@ class LinkPreview extends StatefulWidget {
     this.linkStyle,
     this.metadataTextStyle,
     this.metadataTitleStyle,
+    this.onLinkPressed,
     required this.onPreviewDataFetched,
     this.padding,
     required this.previewData,
     required this.text,
     this.textStyle,
     required this.width,
-    this.onLinkPressed,
   }) : super(key: key);
 
   /// Expand animation duration
@@ -41,6 +41,9 @@ class LinkPreview extends StatefulWidget {
 
   /// Style of preview's title
   final TextStyle? metadataTitleStyle;
+
+  /// Custom link press handler
+  final void Function(String)? onLinkPressed;
 
   /// Callback which is called when [PreviewData] was successfully parsed.
   /// Use it to save [PreviewData] to the state and pass it back
@@ -63,8 +66,6 @@ class LinkPreview extends StatefulWidget {
 
   /// Width of the [LinkPreview] widget
   final double width;
-
-  final void Function(String url)? onLinkPressed;
 
   @override
   _LinkPreviewState createState() => _LinkPreviewState();
@@ -160,31 +161,28 @@ class _LinkPreviewState extends State<LinkPreview>
   }
 
   Widget _bodyWidget(PreviewData data, String text, double width) {
+    final _padding = widget.padding ??
+        const EdgeInsets.only(
+          bottom: 16,
+          left: 24,
+          right: 24,
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          padding: widget.padding?.subtract(
-                EdgeInsets.only(
-                  bottom: widget.padding?.bottom ?? 0,
-                  top: widget.padding?.top ?? 0,
-                ),
-              ) ??
-              const EdgeInsets.only(
-                bottom: 16,
-                left: 24,
-                right: 24,
-              ),
+          padding: EdgeInsets.only(
+            bottom: _padding.bottom,
+            left: _padding.left,
+            right: _padding.right,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (data.title != null) _titleWidget(data.title!),
               if (data.description != null)
                 _descriptionWidget(data.description!),
-              if (data.title != null && data.description != null)
-                const SizedBox(
-                  height: 8,
-                )
             ],
           ),
         ),
@@ -219,12 +217,11 @@ class _LinkPreviewState extends State<LinkPreview>
                     left: _padding.left,
                     right: _padding.right,
                     top: _padding.top,
-                    bottom: 0),
+                    bottom: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _linkify(),
-                const SizedBox(height: 12),
                 if (withPadding && child != null)
                   shouldAnimate ? _animated(child) : child,
               ],
@@ -255,12 +252,6 @@ class _LinkPreviewState extends State<LinkPreview>
         maxHeight: width,
       ),
       width: width,
-      margin: const EdgeInsets.only(
-        top: 8,
-        // bottom: widget.padding?.bottom ?? 0,
-        // left: widget.padding?.left ?? 0,
-        // right: widget.padding?.right ?? 0,
-      ),
       child: Image.network(
         url,
         fit: BoxFit.fitWidth,
@@ -274,7 +265,7 @@ class _LinkPreviewState extends State<LinkPreview>
       linkStyle: widget.linkStyle,
       maxLines: 100,
       onOpen: widget.onLinkPressed != null
-          ? (val) => widget.onLinkPressed!(val.url)
+          ? (element) => widget.onLinkPressed!(element.url)
           : _onOpen,
       options: const LinkifyOptions(
         defaultToHttps: true,
