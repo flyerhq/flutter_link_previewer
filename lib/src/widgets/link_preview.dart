@@ -64,7 +64,7 @@ class LinkPreview extends StatefulWidget {
   /// Width of the [LinkPreview] widget
   final double width;
 
-  final void Function(String? url)? onLinkPressed;
+  final void Function(String url)? onLinkPressed;
 
   @override
   _LinkPreviewState createState() => _LinkPreviewState();
