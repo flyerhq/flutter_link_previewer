@@ -24,6 +24,7 @@ class LinkPreview extends StatefulWidget {
     required this.text,
     this.textStyle,
     required this.width,
+    this.onLinkPressed,
   }) : super(key: key);
 
   /// Expand animation duration
@@ -62,6 +63,8 @@ class LinkPreview extends StatefulWidget {
 
   /// Width of the [LinkPreview] widget
   final double width;
+
+  final void Function(String? url)? onLinkPressed;
 
   @override
   _LinkPreviewState createState() => _LinkPreviewState();
@@ -270,7 +273,9 @@ class _LinkPreviewState extends State<LinkPreview>
       linkifiers: [UrlLinkifier()],
       linkStyle: widget.linkStyle,
       maxLines: 100,
-      onOpen: _onOpen,
+      onOpen: widget.onLinkPressed != null
+          ? (val) => widget.onLinkPressed!(val.url)
+          : _onOpen,
       options: const LinkifyOptions(
         defaultToHttps: true,
         humanize: false,
