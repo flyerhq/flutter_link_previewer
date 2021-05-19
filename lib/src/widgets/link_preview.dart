@@ -143,6 +143,12 @@ class _LinkPreviewState extends State<LinkPreview>
     }
   }
 
+  bool _hasData(PreviewData? previewData) {
+    return previewData?.title != null ||
+        previewData?.description != null ||
+        previewData?.image?.url != null;
+  }
+
   Future<void> _onOpen(LinkableElement link) async {
     if (await canLaunch(link.url)) {
       await launch(link.url);
@@ -338,7 +344,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.previewData != null) {
+    if (widget.previewData != null && _hasData(widget.previewData)) {
       final aspectRatio = widget.previewData!.image == null
           ? null
           : widget.previewData!.image!.width /
