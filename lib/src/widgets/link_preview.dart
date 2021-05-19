@@ -14,6 +14,8 @@ class LinkPreview extends StatefulWidget {
   const LinkPreview({
     Key? key,
     this.animationDuration,
+    this.header,
+    this.headerStyle,
     this.enableAnimation = false,
     this.linkStyle,
     this.metadataTextStyle,
@@ -29,6 +31,12 @@ class LinkPreview extends StatefulWidget {
 
   /// Expand animation duration
   final Duration? animationDuration;
+
+  /// Custom header above main text
+  final String? header;
+
+  /// Style of custom header
+  final TextStyle? headerStyle;
 
   /// Enables expand animation. Default value is false.
   final bool? enableAnimation;
@@ -227,6 +235,16 @@ class _LinkPreviewState extends State<LinkPreview>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (widget.header != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(
+                      widget.header!,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: widget.headerStyle,
+                    ),
+                  ),
                 _linkify(),
                 if (withPadding && child != null)
                   shouldAnimate ? _animated(child) : child,
