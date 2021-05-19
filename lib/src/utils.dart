@@ -119,6 +119,10 @@ Future<Size> _getImageSize(String url) {
 }
 
 Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
+  if (imageUrls.length > 5) {
+    imageUrls.removeRange(5, imageUrls.length);
+  }
+
   var currentUrl = imageUrls[0];
   var currentArea = 0.0;
 
@@ -205,4 +209,5 @@ Future<PreviewData> getPreviewData(String text) async {
 }
 
 /// Regex to find all links in the text
-const REGEX_LINK = r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+';
+const REGEX_LINK =
+    r'([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?';

@@ -47,32 +47,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView.builder(
         itemCount: urls.length,
-        itemBuilder: (context, index) => Container(
-          key: ValueKey(urls[index]),
-          margin: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
+        itemBuilder: (context, index) => Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            key: ValueKey(urls[index]),
+            margin: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(
+                Radius.circular(20),
+              ),
+              color: Color(0xfff7f7f8),
             ),
-            color: Color(0xfff7f7f8),
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(20),
-            ),
-            child: LinkPreview(
-              enableAnimation: true,
-              onPreviewDataFetched: (data) {
-                setState(() {
-                  datas = {
-                    ...datas,
-                    urls[index]: data,
-                  };
-                });
-              },
-              previewData: datas[urls[index]],
-              text: urls[index],
-              width: MediaQuery.of(context).size.width,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
+              ),
+              child: LinkPreview(
+                enableAnimation: true,
+                onPreviewDataFetched: (data) {
+                  setState(() {
+                    datas = {
+                      ...datas,
+                      urls[index]: data,
+                    };
+                  });
+                },
+                previewData: datas[urls[index]],
+                text: urls[index],
+                width: MediaQuery.of(context).size.width,
+              ),
             ),
           ),
         ),
