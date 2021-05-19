@@ -2,7 +2,7 @@ name: flutter_link_previewer
 description: >
   URL preview extracted from the provided text with
   basic customization and ability to render from cached data.
-version: 2.0.1
+version: 2.0.2
 homepage: https://github.com/flyerhq/flutter_link_previewer
 
 environment:

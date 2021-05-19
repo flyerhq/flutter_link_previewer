@@ -1,3 +1,9 @@
+## 2.0.2
+
+- Fix paddings for an empty preview data
+- Limit number of images parsed
+- Fix regex
+
 ## 2.0.1
 
 - Fix custom padding and add a custom link press handler
