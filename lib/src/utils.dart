@@ -161,6 +161,21 @@ Future<PreviewData> getPreviewData(String text) async {
     final response = await http.get(uri);
     final document = parser.parse(response.body);
 
+    final imageRegexp = RegExp(REGEX_IMAGE_CONTENT_TYPE);
+
+    if (imageRegexp.hasMatch(response.headers['content-type'] ?? '')) {
+      final imageSize = await _getImageSize(previewDataUrl);
+      previewDataImage = PreviewDataImage(
+        height: imageSize.height,
+        url: previewDataUrl,
+        width: imageSize.width,
+      );
+      return PreviewData(
+        image: previewDataImage,
+        link: previewDataUrl,
+      );
+    }
+
     if (!_hasUTF8Charset(document)) {
       return previewData;
     }
@@ -207,6 +222,9 @@ Future<PreviewData> getPreviewData(String text) async {
     );
   }
 }
+
+/// Regex to check if content type is an image
+const REGEX_IMAGE_CONTENT_TYPE = r'image\/*';
 
 /// Regex to find all links in the text
 const REGEX_LINK =

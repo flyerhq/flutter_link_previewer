@@ -157,6 +157,12 @@ class _LinkPreviewState extends State<LinkPreview>
         previewData?.image?.url != null;
   }
 
+  bool _hasOnlyImage() {
+    return widget.previewData?.title == null &&
+        widget.previewData?.description == null &&
+        widget.previewData?.image?.url != null;
+  }
+
   Future<void> _onOpen(LinkableElement link) async {
     if (await canLaunch(link.url)) {
       await launch(link.url);
@@ -231,7 +237,7 @@ class _LinkPreviewState extends State<LinkPreview>
                     left: _padding.left,
                     right: _padding.right,
                     top: _padding.top,
-                    bottom: 16,
+                    bottom: _hasOnlyImage() ? 0 : 16,
                   ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

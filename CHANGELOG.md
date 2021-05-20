@@ -1,3 +1,7 @@
+## 2.0.4
+
+- Add preview for the image link
+
 ## 2.0.3
 
 - Add a custom header above the text
