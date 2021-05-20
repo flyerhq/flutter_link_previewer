@@ -1,3 +1,7 @@
+## 2.0.3
+
+- Add a custom header above the text
+
 ## 2.0.2
 
 - Fix paddings for an empty preview data
