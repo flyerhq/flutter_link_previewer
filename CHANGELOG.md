@@ -1,3 +1,7 @@
+## 2.0.7
+
+- Fix alignment
+
 ## 2.0.6
 
 - Update to Flutter 2.2
