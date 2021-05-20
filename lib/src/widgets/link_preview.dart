@@ -291,10 +291,11 @@ class _LinkPreviewState extends State<LinkPreview>
   }
 
   Widget _linkify() {
-    return Linkify(
+    return SelectableLinkify(
       linkifiers: [UrlLinkifier()],
       linkStyle: widget.linkStyle,
       maxLines: 100,
+      minLines: 1,
       onOpen: widget.onLinkPressed != null
           ? (element) => widget.onLinkPressed!(element.url)
           : _onOpen,
