@@ -1,3 +1,7 @@
+## 2.0.6
+
+- Update to Flutter 2.2
+
 ## 2.0.5
 
 - Fix links starting from a capital `Http`
