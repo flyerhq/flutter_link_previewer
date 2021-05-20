@@ -153,7 +153,7 @@ Future<PreviewData> getPreviewData(String text) async {
     if (matches.isEmpty) return previewData;
 
     var url = text.substring(matches.first.start, matches.first.end);
-    if (!url.startsWith('http')) {
+    if (!url.toLowerCase().startsWith('http')) {
       url = 'https://' + url;
     }
     previewDataUrl = url;

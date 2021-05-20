@@ -1,3 +1,7 @@
+## 2.0.5
+
+- Fix links starting from a capital `Http`
+
 ## 2.0.4
 
 - Add preview for the image link
