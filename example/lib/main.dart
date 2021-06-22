@@ -33,9 +33,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, PreviewData> datas = {};
 
   List<String> get urls => const [
-        'https://flyer.chat',
-        'github.com/flyerhq',
-      ];
+    'https://flyer.chat',
+    'github.com/flyerhq',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               child: LinkPreview(
                 enableAnimation: true,
+                imagePosition: ImagePosition.top,
                 onPreviewDataFetched: (data) {
                   setState(() {
                     datas = {

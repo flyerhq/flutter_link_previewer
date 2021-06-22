@@ -229,3 +229,9 @@ const REGEX_IMAGE_CONTENT_TYPE = r'image\/*';
 /// Regex to find all links in the text
 const REGEX_LINK =
     r'([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?';
+
+/// Enum for image position
+enum ImagePosition {
+  top,
+  bottom,
+}
