@@ -17,6 +17,7 @@ class LinkPreview extends StatefulWidget {
     this.enableAnimation = false,
     this.header,
     this.headerStyle,
+    this.hideImage,
     this.linkStyle,
     this.metadataTextStyle,
     this.metadataTitleStyle,
@@ -40,6 +41,9 @@ class LinkPreview extends StatefulWidget {
 
   /// Style of the custom header
   final TextStyle? headerStyle;
+
+  /// Hides image data from the preview
+  final bool? hideImage;
 
   /// Style of highlighted links in the text
   final TextStyle? linkStyle;
@@ -206,7 +210,8 @@ class _LinkPreviewState extends State<LinkPreview>
             ],
           ),
         ),
-        if (data.image?.url != null) _imageWidget(data.image!.url, width),
+        if (data.image?.url != null && widget.hideImage != true)
+          _imageWidget(data.image!.url, width),
       ],
     );
   }
@@ -332,7 +337,7 @@ class _LinkPreviewState extends State<LinkPreview>
                     ),
                   ),
                 ),
-                if (data.image?.url != null)
+                if (data.image?.url != null && widget.hideImage != true)
                   _minimizedImageWidget(data.image!.url),
               ],
             ),

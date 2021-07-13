@@ -1,3 +1,7 @@
+## 2.2.0
+
+- Add `hideImage` param
+
 ## 2.1.0
 
 - Update dependencies
