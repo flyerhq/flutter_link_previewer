@@ -99,10 +99,13 @@ String? _getActualImageUrl(String baseUrl, String? imageUrl) {
 Future<Size> _getImageSize(String url) {
   final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
   final completer = Completer<Size>();
+  late ImageStreamListener _streamListener;
 
-  void onError(Object _, StackTrace? __) {}
+  final _onError = (Object error, StackTrace? stackTrace) {
+    completer.completeError(error, stackTrace);
+  };
 
-  void listener(ImageInfo info, bool _) {
+  final listener = (ImageInfo info, bool _) {
     if (!completer.isCompleted) {
       completer.complete(
         Size(
@@ -110,11 +113,13 @@ Future<Size> _getImageSize(String url) {
           width: info.image.width.toDouble(),
         ),
       );
-      stream.removeListener(ImageStreamListener(listener, onError: onError));
     }
-  }
+    stream.removeListener(_streamListener);
+  };
 
-  stream.addListener(ImageStreamListener(listener, onError: onError));
+  _streamListener = ImageStreamListener(listener, onError: _onError);
+
+  stream.addListener(_streamListener);
   return completer.future;
 }
 
