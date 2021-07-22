@@ -27,8 +27,15 @@ class LinkPreview extends StatefulWidget {
     required this.previewData,
     required this.text,
     this.textStyle,
-    required this.width,
-  }) : super(key: key);
+    this.width,
+    this.builder,
+  }) :
+        // assert(builder == null && width == null,
+        //           'You must specify a width when no builder is provided'),
+        super(key: key);
+
+  /// Provide you own builder
+  final Widget Function(PreviewData? data)? builder;
 
   /// Expand animation duration
   final Duration? animationDuration;
@@ -76,8 +83,9 @@ class LinkPreview extends StatefulWidget {
   /// Style of the provided text
   final TextStyle? textStyle;
 
-  /// Width of the [LinkPreview] widget
-  final double width;
+  /// Width of the [LinkPreview] widget.
+  /// If you not provide a value, the default value will be MediaQuery.of(context).size.width
+  final double? width;
 
   @override
   _LinkPreviewState createState() => _LinkPreviewState();
@@ -97,6 +105,8 @@ class _LinkPreviewState extends State<LinkPreview>
 
   bool isFetchingPreviewData = false;
   bool shouldAnimate = false;
+
+  double get defaultWidth => widget.width ?? MediaQuery.of(context).size.width;
 
   @override
   void initState() {
@@ -230,7 +240,7 @@ class _LinkPreviewState extends State<LinkPreview>
     final shouldAnimate = widget.enableAnimation == true && animate;
 
     return Container(
-      constraints: BoxConstraints(maxWidth: widget.width),
+      constraints: BoxConstraints(maxWidth: defaultWidth),
       padding: withPadding ? _padding : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,13 +385,15 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.builder != null) return widget.builder!.call(widget.previewData);
+
     if (widget.previewData != null && _hasData(widget.previewData)) {
       final aspectRatio = widget.previewData!.image == null
           ? null
           : widget.previewData!.image!.width /
               widget.previewData!.image!.height;
 
-      final _width = aspectRatio == 1 ? widget.width : widget.width - 32;
+      final _width = aspectRatio == 1 ? defaultWidth : defaultWidth - 32;
 
       return _containerWidget(
         animate: shouldAnimate,
