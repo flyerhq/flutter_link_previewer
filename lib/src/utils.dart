@@ -99,10 +99,13 @@ String? _getActualImageUrl(String baseUrl, String? imageUrl) {
 Future<Size> _getImageSize(String url) {
   final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
   final completer = Completer<Size>();
+  late ImageStreamListener _streamListener;
 
-  void onError(Object _, StackTrace? __) {}
+  final _onError = (Object error, StackTrace? stackTrace) {
+    completer.completeError(error, stackTrace);
+  };
 
-  void listener(ImageInfo info, bool _) {
+  final listener = (ImageInfo info, bool _) {
     if (!completer.isCompleted) {
       completer.complete(
         Size(
@@ -110,15 +113,18 @@ Future<Size> _getImageSize(String url) {
           width: info.image.width.toDouble(),
         ),
       );
-      stream.removeListener(ImageStreamListener(listener, onError: onError));
     }
-  }
+    stream.removeListener(_streamListener);
+  };
 
-  stream.addListener(ImageStreamListener(listener, onError: onError));
+  _streamListener = ImageStreamListener(listener, onError: _onError);
+
+  stream.addListener(_streamListener);
   return completer.future;
 }
 
-Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
+Future<String> _getBiggestImageUrl(
+    List<String> imageUrls, String? proxy) async {
   if (imageUrls.length > 5) {
     imageUrls.removeRange(5, imageUrls.length);
   }
@@ -127,19 +133,26 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
   var currentArea = 0.0;
 
   await Future.forEach(imageUrls, (String url) async {
-    final size = await _getImageSize(url);
+    final size = await _getImageSize(_calculateUrl(url, proxy));
     final area = size.width * size.height;
     if (area > currentArea) {
       currentArea = area;
-      currentUrl = url;
+      currentUrl = _calculateUrl(url, proxy);
     }
   });
 
   return currentUrl;
 }
 
+String _calculateUrl(String baseUrl, String? proxy) {
+  if (proxy != null) {
+    return '$proxy$baseUrl';
+  }
+  return baseUrl;
+}
+
 /// Parses provided text and returns [PreviewData] for the first found link
-Future<PreviewData> getPreviewData(String text) async {
+Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
   const previewData = PreviewData();
 
   String? previewDataDescription;
@@ -156,8 +169,8 @@ Future<PreviewData> getPreviewData(String text) async {
     if (!url.toLowerCase().startsWith('http')) {
       url = 'https://' + url;
     }
-    previewDataUrl = url;
-    final uri = Uri.parse(url);
+    previewDataUrl = _calculateUrl(url, proxy);
+    final uri = Uri.parse(previewDataUrl);
     final response = await http.get(uri);
     final document = parser.parse(response.body);
 
@@ -197,8 +210,8 @@ Future<PreviewData> getPreviewData(String text) async {
 
     if (imageUrls.isNotEmpty) {
       imageUrl = imageUrls.length == 1
-          ? imageUrls[0]
-          : await _getBiggestImageUrl(imageUrls);
+          ? _calculateUrl(imageUrls[0], proxy)
+          : await _getBiggestImageUrl(imageUrls, proxy);
 
       imageSize = await _getImageSize(imageUrl);
       previewDataImage = PreviewDataImage(
