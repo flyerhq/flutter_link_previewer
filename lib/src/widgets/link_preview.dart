@@ -14,6 +14,7 @@ class LinkPreview extends StatefulWidget {
   const LinkPreview({
     Key? key,
     this.animationDuration,
+    this.corsProxy,
     this.enableAnimation = false,
     this.header,
     this.headerStyle,
@@ -27,15 +28,11 @@ class LinkPreview extends StatefulWidget {
     required this.previewData,
     required this.text,
     this.textStyle,
-    this.width,
-    this.builder,
-    this.corsProxy,
+    required this.width,
   }) : super(key: key);
 
+  /// CORS proxy to make more previews work on web. Not tested.
   final String? corsProxy;
-
-  /// Provide you own builder
-  final Widget Function(PreviewData? data)? builder;
 
   /// Expand animation duration
   final Duration? animationDuration;
@@ -83,9 +80,8 @@ class LinkPreview extends StatefulWidget {
   /// Style of the provided text
   final TextStyle? textStyle;
 
-  /// Width of the [LinkPreview] widget.
-  /// If you not provide a value, the default value will be MediaQuery.of(context).size.width
-  final double? width;
+  /// Width of the [LinkPreview] widget
+  final double width;
 
   @override
   _LinkPreviewState createState() => _LinkPreviewState();
@@ -105,8 +101,6 @@ class _LinkPreviewState extends State<LinkPreview>
 
   bool isFetchingPreviewData = false;
   bool shouldAnimate = false;
-
-  double get defaultWidth => widget.width ?? MediaQuery.of(context).size.width;
 
   @override
   void initState() {
@@ -240,7 +234,7 @@ class _LinkPreviewState extends State<LinkPreview>
     final shouldAnimate = widget.enableAnimation == true && animate;
 
     return Container(
-      constraints: BoxConstraints(maxWidth: defaultWidth),
+      constraints: BoxConstraints(maxWidth: widget.width),
       padding: withPadding ? _padding : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,15 +379,13 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.builder != null) return widget.builder!.call(widget.previewData);
-
     if (widget.previewData != null && _hasData(widget.previewData)) {
       final aspectRatio = widget.previewData!.image == null
           ? null
           : widget.previewData!.image!.width /
               widget.previewData!.image!.height;
 
-      final _width = aspectRatio == 1 ? defaultWidth : defaultWidth - 32;
+      final _width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
       return _containerWidget(
         animate: shouldAnimate,

@@ -7,6 +7,14 @@ import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
 import 'types.dart';
 
+String _calculateUrl(String baseUrl, String? proxy) {
+  if (proxy != null) {
+    return '$proxy$baseUrl';
+  }
+
+  return baseUrl;
+}
+
 String? _getMetaContent(Document document, String propertyValue) {
   final meta = document.getElementsByTagName('meta');
   final element = meta.firstWhere(
@@ -97,11 +105,11 @@ String? _getActualImageUrl(String baseUrl, String? imageUrl) {
 }
 
 Future<Size> _getImageSize(String url) {
-  final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
   final completer = Completer<Size>();
-  late ImageStreamListener _streamListener;
+  final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
+  late ImageStreamListener streamListener;
 
-  final _onError = (Object error, StackTrace? stackTrace) {
+  final onError = (Object error, StackTrace? stackTrace) {
     completer.completeError(error, stackTrace);
   };
 
@@ -114,17 +122,19 @@ Future<Size> _getImageSize(String url) {
         ),
       );
     }
-    stream.removeListener(_streamListener);
+    stream.removeListener(streamListener);
   };
 
-  _streamListener = ImageStreamListener(listener, onError: _onError);
+  streamListener = ImageStreamListener(listener, onError: onError);
 
-  stream.addListener(_streamListener);
+  stream.addListener(streamListener);
   return completer.future;
 }
 
 Future<String> _getBiggestImageUrl(
-    List<String> imageUrls, String? proxy) async {
+  List<String> imageUrls,
+  String? proxy,
+) async {
   if (imageUrls.length > 5) {
     imageUrls.removeRange(5, imageUrls.length);
   }
@@ -142,13 +152,6 @@ Future<String> _getBiggestImageUrl(
   });
 
   return currentUrl;
-}
-
-String _calculateUrl(String baseUrl, String? proxy) {
-  if (proxy != null) {
-    return '$proxy$baseUrl';
-  }
-  return baseUrl;
 }
 
 /// Parses provided text and returns [PreviewData] for the first found link
