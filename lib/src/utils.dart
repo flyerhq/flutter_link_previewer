@@ -123,7 +123,8 @@ Future<Size> _getImageSize(String url) {
   return completer.future;
 }
 
-Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
+Future<String> _getBiggestImageUrl(
+    List<String> imageUrls, String? proxy) async {
   if (imageUrls.length > 5) {
     imageUrls.removeRange(5, imageUrls.length);
   }
@@ -132,11 +133,11 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
   var currentArea = 0.0;
 
   await Future.forEach(imageUrls, (String url) async {
-    final size = await _getImageSize(url);
+    final size = await _getImageSize(_calculateUrl(url, proxy));
     final area = size.width * size.height;
     if (area > currentArea) {
       currentArea = area;
-      currentUrl = url;
+      currentUrl = _calculateUrl(url, proxy);
     }
   });
 
@@ -209,13 +210,13 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
 
     if (imageUrls.isNotEmpty) {
       imageUrl = imageUrls.length == 1
-          ? imageUrls[0]
-          : await _getBiggestImageUrl(imageUrls);
+          ? _calculateUrl(imageUrls[0], proxy)
+          : await _getBiggestImageUrl(imageUrls, proxy);
 
-      imageSize = await _getImageSize(_calculateUrl(imageUrl, proxy));
+      imageSize = await _getImageSize(imageUrl);
       previewDataImage = PreviewDataImage(
         height: imageSize.height,
-        url: _calculateUrl(imageUrl, proxy),
+        url: imageUrl,
         width: imageSize.width,
       );
     }
