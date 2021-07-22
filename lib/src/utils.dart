@@ -143,8 +143,15 @@ Future<String> _getBiggestImageUrl(List<String> imageUrls) async {
   return currentUrl;
 }
 
+String _calculateUrl(String baseUrl, String? proxy) {
+  if (proxy != null) {
+    return '$proxy$baseUrl';
+  }
+  return baseUrl;
+}
+
 /// Parses provided text and returns [PreviewData] for the first found link
-Future<PreviewData> getPreviewData(String text) async {
+Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
   const previewData = PreviewData();
 
   String? previewDataDescription;
@@ -161,8 +168,8 @@ Future<PreviewData> getPreviewData(String text) async {
     if (!url.toLowerCase().startsWith('http')) {
       url = 'https://' + url;
     }
-    previewDataUrl = url;
-    final uri = Uri.parse(url);
+    previewDataUrl = _calculateUrl(url, proxy);
+    final uri = Uri.parse(previewDataUrl);
     final response = await http.get(uri);
     final document = parser.parse(response.body);
 
@@ -205,10 +212,10 @@ Future<PreviewData> getPreviewData(String text) async {
           ? imageUrls[0]
           : await _getBiggestImageUrl(imageUrls);
 
-      imageSize = await _getImageSize(imageUrl);
+      imageSize = await _getImageSize(_calculateUrl(imageUrl, proxy));
       previewDataImage = PreviewDataImage(
         height: imageSize.height,
-        url: imageUrl,
+        url: _calculateUrl(imageUrl, proxy),
         width: imageSize.width,
       );
     }

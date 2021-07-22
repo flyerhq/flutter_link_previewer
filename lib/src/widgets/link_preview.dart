@@ -29,10 +29,10 @@ class LinkPreview extends StatefulWidget {
     this.textStyle,
     this.width,
     this.builder,
-  }) :
-        // assert(builder == null && width == null,
-        //           'You must specify a width when no builder is provided'),
-        super(key: key);
+    this.corsProxy,
+  }) : super(key: key);
+
+  final String? corsProxy;
 
   /// Provide you own builder
   final Widget Function(PreviewData? data)? builder;
@@ -147,7 +147,7 @@ class _LinkPreviewState extends State<LinkPreview>
       isFetchingPreviewData = true;
     });
 
-    final previewData = await getPreviewData(text);
+    final previewData = await getPreviewData(text, proxy: widget.corsProxy);
     _handlePreviewDataFetched(previewData);
     return previewData;
   }
