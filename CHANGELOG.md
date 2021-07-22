@@ -1,3 +1,7 @@
+## 2.2.3
+
+- Update dependencies
+
 ## 2.2.2
 
 - Fix completer that never completes and add `corsProxy` parameter. Thanks @wer-mathurin for the PR!
