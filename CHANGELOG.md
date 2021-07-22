@@ -1,3 +1,8 @@
+## 2.2.2
+
+- Fix completer that never completes and add `corsProxy` parameter. Thanks @wer-mathurin for the PR!
+- Export `getPreviewData` to allow you to create your own implementation of a link preview.
+
 ## 2.2.1
 
 - Update dependencies
