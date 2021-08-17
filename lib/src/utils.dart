@@ -164,11 +164,24 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
   String? previewDataUrl;
 
   try {
-    final urlRegexp = RegExp(REGEX_LINK);
-    final matches = urlRegexp.allMatches(text.toLowerCase());
+    final emailRegexp = RegExp(REGEX_EMAIL, caseSensitive: false);
+    final textWithoutEmails = text
+        .replaceAllMapped(
+          emailRegexp,
+          (match) => '',
+        )
+        .trim();
+    if (textWithoutEmails.isEmpty) return previewData;
+
+    final urlRegexp = RegExp(REGEX_LINK, caseSensitive: false);
+    final matches = urlRegexp.allMatches(textWithoutEmails);
     if (matches.isEmpty) return previewData;
 
-    var url = text.substring(matches.first.start, matches.first.end);
+    var url = textWithoutEmails.substring(
+      matches.first.start,
+      matches.first.end,
+    );
+
     if (!url.toLowerCase().startsWith('http')) {
       url = 'https://' + url;
     }
@@ -239,9 +252,12 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
   }
 }
 
+/// Regex to check if text is email
+const REGEX_EMAIL = r'([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)';
+
 /// Regex to check if content type is an image
 const REGEX_IMAGE_CONTENT_TYPE = r'image\/*';
 
 /// Regex to find all links in the text
 const REGEX_LINK =
-    r'([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#\.]?[\w-]+)*\/?';
+    r'((http|ftp|https):\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?';
