@@ -1,3 +1,8 @@
+## 2.3.0
+
+- Improve REGEX
+- Add custom `imageBuilder`
+
 ## 2.2.3
 
 - Update dependencies

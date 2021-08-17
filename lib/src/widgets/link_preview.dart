@@ -14,12 +14,12 @@ class LinkPreview extends StatefulWidget {
   const LinkPreview({
     Key? key,
     this.animationDuration,
-    this.buildImage,
     this.corsProxy,
     this.enableAnimation = false,
     this.header,
     this.headerStyle,
     this.hideImage,
+    this.imageBuilder,
     this.linkStyle,
     this.metadataTextStyle,
     this.metadataTitleStyle,
@@ -35,9 +35,6 @@ class LinkPreview extends StatefulWidget {
   /// Expand animation duration
   final Duration? animationDuration;
 
-  /// Function that allows to build custom image widget
-  final Widget Function(String)? buildImage;
-
   /// CORS proxy to make more previews work on web. Not tested.
   final String? corsProxy;
 
@@ -52,6 +49,9 @@ class LinkPreview extends StatefulWidget {
 
   /// Hides image data from the preview
   final bool? hideImage;
+
+  /// Function that allows you to build a custom image
+  final Widget Function(String)? imageBuilder;
 
   /// Style of highlighted links in the text
   final TextStyle? linkStyle;
@@ -296,8 +296,8 @@ class _LinkPreviewState extends State<LinkPreview>
         maxHeight: width,
       ),
       width: width,
-      child: widget.buildImage != null
-          ? widget.buildImage!(url)
+      child: widget.imageBuilder != null
+          ? widget.imageBuilder!(url)
           : Image.network(
               url,
               fit: BoxFit.fitWidth,
@@ -364,8 +364,8 @@ class _LinkPreviewState extends State<LinkPreview>
       child: SizedBox(
         height: 48,
         width: 48,
-        child: widget.buildImage != null
-            ? widget.buildImage!(url)
+        child: widget.imageBuilder != null
+            ? widget.imageBuilder!(url)
             : Image.network(url),
       ),
     );
