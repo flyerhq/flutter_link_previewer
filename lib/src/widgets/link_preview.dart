@@ -14,6 +14,7 @@ class LinkPreview extends StatefulWidget {
   const LinkPreview({
     Key? key,
     this.animationDuration,
+    this.buildImage,
     this.corsProxy,
     this.enableAnimation = false,
     this.header,
@@ -31,11 +32,14 @@ class LinkPreview extends StatefulWidget {
     required this.width,
   }) : super(key: key);
 
-  /// CORS proxy to make more previews work on web. Not tested.
-  final String? corsProxy;
-
   /// Expand animation duration
   final Duration? animationDuration;
+
+  /// Function that allows to build custom image widget
+  final Widget Function(String)? buildImage;
+
+  /// CORS proxy to make more previews work on web. Not tested.
+  final String? corsProxy;
 
   /// Enables expand animation. Default value is false.
   final bool? enableAnimation;
@@ -292,16 +296,18 @@ class _LinkPreviewState extends State<LinkPreview>
         maxHeight: width,
       ),
       width: width,
-      child: Image.network(
-        url,
-        fit: BoxFit.fitWidth,
-      ),
+      child: widget.buildImage != null
+          ? widget.buildImage!(url)
+          : Image.network(
+              url,
+              fit: BoxFit.fitWidth,
+            ),
     );
   }
 
   Widget _linkify() {
     return SelectableLinkify(
-      linkifiers: [UrlLinkifier()],
+      linkifiers: [const EmailLinkifier(), UrlLinkifier()],
       linkStyle: widget.linkStyle,
       maxLines: 100,
       minLines: 1,
@@ -358,7 +364,9 @@ class _LinkPreviewState extends State<LinkPreview>
       child: SizedBox(
         height: 48,
         width: 48,
-        child: Image.network(url),
+        child: widget.buildImage != null
+            ? widget.buildImage!(url)
+            : Image.network(url),
       ),
     );
   }
