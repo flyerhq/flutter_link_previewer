@@ -300,7 +300,7 @@ class _LinkPreviewState extends State<LinkPreview>
           ? widget.imageBuilder!(url)
           : Image.network(
               url,
-              fit: BoxFit.fitWidth,
+              fit: BoxFit.contain,
             ),
     );
   }
