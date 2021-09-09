@@ -387,7 +387,9 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.previewData != null && _hasData(widget.previewData)) {
+    final _previewData = widget.previewData;
+
+    if (_previewData != null && _hasData(_previewData)) {
       final aspectRatio = widget.previewData!.image == null
           ? null
           : widget.previewData!.image!.width /
@@ -398,8 +400,8 @@ class _LinkPreviewState extends State<LinkPreview>
       return _containerWidget(
         animate: shouldAnimate,
         child: aspectRatio == 1
-            ? _minimizedBodyWidget(widget.previewData!, widget.text)
-            : _bodyWidget(widget.previewData!, widget.text, _width),
+            ? _minimizedBodyWidget(_previewData, widget.text)
+            : _bodyWidget(_previewData, widget.text, _width),
         withPadding: aspectRatio == 1,
       );
     } else {

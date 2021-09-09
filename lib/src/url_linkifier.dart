@@ -29,7 +29,7 @@ class UrlLinkifier extends Linkifier {
   List<LinkifyElement> parse(elements, options) {
     final list = <LinkifyElement>[];
 
-    elements.forEach((element) {
+    for (final element in elements) {
       if (element is TextElement) {
         var loose = false;
         var match = _urlRegex.firstMatch(element.text);
@@ -92,7 +92,7 @@ class UrlLinkifier extends Linkifier {
       } else {
         list.add(element);
       }
-    });
+    }
 
     return list;
   }

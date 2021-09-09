@@ -1,3 +1,8 @@
+## 2.5.0
+
+- Update to Flutter 2.5
+- Rename `REGEX_EMAIL` to `regexEmail` and `REGEX_LINK` to `regexLink`
+
 ## 2.4.2
 
 - Update dependencies

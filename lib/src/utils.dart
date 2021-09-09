@@ -109,11 +109,11 @@ Future<Size> _getImageSize(String url) {
   final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
   late ImageStreamListener streamListener;
 
-  final onError = (Object error, StackTrace? stackTrace) {
+  onError(Object error, StackTrace? stackTrace) {
     completer.completeError(error, stackTrace);
-  };
+  }
 
-  final listener = (ImageInfo info, bool _) {
+  listener(ImageInfo info, bool _) {
     if (!completer.isCompleted) {
       completer.complete(
         Size(
@@ -123,7 +123,7 @@ Future<Size> _getImageSize(String url) {
       );
     }
     stream.removeListener(streamListener);
-  };
+  }
 
   streamListener = ImageStreamListener(listener, onError: onError);
 
@@ -164,7 +164,7 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
   String? previewDataUrl;
 
   try {
-    final emailRegexp = RegExp(REGEX_EMAIL, caseSensitive: false);
+    final emailRegexp = RegExp(regexEmail, caseSensitive: false);
     final textWithoutEmails = text
         .replaceAllMapped(
           emailRegexp,
@@ -173,7 +173,7 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
         .trim();
     if (textWithoutEmails.isEmpty) return previewData;
 
-    final urlRegexp = RegExp(REGEX_LINK, caseSensitive: false);
+    final urlRegexp = RegExp(regexLink, caseSensitive: false);
     final matches = urlRegexp.allMatches(textWithoutEmails);
     if (matches.isEmpty) return previewData;
 
@@ -190,7 +190,7 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
     final response = await http.get(uri);
     final document = parser.parse(response.body);
 
-    final imageRegexp = RegExp(REGEX_IMAGE_CONTENT_TYPE);
+    final imageRegexp = RegExp(regexImageContentType);
 
     if (imageRegexp.hasMatch(response.headers['content-type'] ?? '')) {
       final imageSize = await _getImageSize(previewDataUrl);
@@ -253,11 +253,11 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
 }
 
 /// Regex to check if text is email
-const REGEX_EMAIL = r'([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)';
+const regexEmail = r'([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)';
 
 /// Regex to check if content type is an image
-const REGEX_IMAGE_CONTENT_TYPE = r'image\/*';
+const regexImageContentType = r'image\/*';
 
 /// Regex to find all links in the text
-const REGEX_LINK =
+const regexLink =
     r'((http|ftp|https):\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?';
