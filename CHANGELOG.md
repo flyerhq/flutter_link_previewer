@@ -1,3 +1,7 @@
+## 2.5.2
+
+Additionally, revert `json_annotation` upgrade
+
 ## 2.5.1
 
 Revert `meta` upgrade, because `pub.dev` is analyzing code with an old Flutter version
