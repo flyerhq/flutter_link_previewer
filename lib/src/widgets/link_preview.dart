@@ -178,8 +178,6 @@ class _LinkPreviewState extends State<LinkPreview>
   Future<void> _onOpen(LinkableElement link) async {
     if (await canLaunch(link.url)) {
       await launch(link.url);
-    } else {
-      throw 'Could not launch $link';
     }
   }
 

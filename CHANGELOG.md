@@ -1,3 +1,8 @@
+## 2.6.0
+
+- Updated dependencies (requires Dart >=2.14.0)
+- Fixed Android example. Thanks @rvndsngwn for reporting!
+
 ## 2.5.2
 
 Additionally, revert `json_annotation` upgrade
