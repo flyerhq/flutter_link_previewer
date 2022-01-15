@@ -1,3 +1,8 @@
+## 2.6.2
+
+- Use utf8 codec to parse chinese symbols
+- Update dependencies. Requires Dart >= 2.15.1.
+
 ## 2.6.1
 
 - Update dependencies

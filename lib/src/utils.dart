@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart' hide Element;
 import 'package:flutter_chat_types/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
@@ -188,7 +189,7 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
     final response = await http.get(uri);
-    final document = parser.parse(response.body);
+    final document = parser.parse(utf8.decode(response.bodyBytes));
 
     final imageRegexp = RegExp(regexImageContentType);
 
