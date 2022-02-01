@@ -29,6 +29,7 @@ class LinkPreview extends StatefulWidget {
     required this.previewData,
     required this.text,
     this.textStyle,
+    this.textWidget,
     required this.width,
   }) : super(key: key);
 
@@ -83,6 +84,9 @@ class LinkPreview extends StatefulWidget {
 
   /// Style of the provided text
   final TextStyle? textStyle;
+
+  /// Widget to display above the preview. If null, defaults to a linkified [text].
+  final Widget? textWidget;
 
   /// Width of the [LinkPreview] widget
   final double width;
@@ -190,7 +194,7 @@ class _LinkPreviewState extends State<LinkPreview>
     );
   }
 
-  Widget _bodyWidget(PreviewData data, String text, double width) {
+  Widget _bodyWidget(PreviewData data, double width) {
     final _padding = widget.padding ??
         const EdgeInsets.only(
           bottom: 16,
@@ -263,7 +267,7 @@ class _LinkPreviewState extends State<LinkPreview>
                       style: widget.headerStyle,
                     ),
                   ),
-                _linkify(),
+                widget.textWidget ?? _linkify(),
                 if (withPadding && child != null)
                   shouldAnimate ? _animated(child) : child,
               ],
@@ -322,7 +326,7 @@ class _LinkPreviewState extends State<LinkPreview>
     );
   }
 
-  Widget _minimizedBodyWidget(PreviewData data, String text) {
+  Widget _minimizedBodyWidget(PreviewData data) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -398,8 +402,8 @@ class _LinkPreviewState extends State<LinkPreview>
       return _containerWidget(
         animate: shouldAnimate,
         child: aspectRatio == 1
-            ? _minimizedBodyWidget(_previewData, widget.text)
-            : _bodyWidget(_previewData, widget.text, _width),
+            ? _minimizedBodyWidget(_previewData)
+            : _bodyWidget(_previewData, _width),
         withPadding: aspectRatio == 1,
       );
     } else {
