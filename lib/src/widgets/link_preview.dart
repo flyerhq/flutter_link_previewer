@@ -26,6 +26,8 @@ class LinkPreview extends StatefulWidget {
     this.metadataTitleStyle,
     this.onLinkPressed,
     required this.onPreviewDataFetched,
+    this.openOnPreviewImageClick = false,
+    this.openOnPreviewTitleClick = false,
     this.padding,
     required this.previewData,
     required this.text,
@@ -71,6 +73,12 @@ class LinkPreview extends StatefulWidget {
   /// to the [LinkPreview.previewData] so the [LinkPreview] would not fetch
   /// preview data again.
   final void Function(PreviewData) onPreviewDataFetched;
+
+  /// Open the link when the link preview image is clicked. Defaults to false.
+  final bool openOnPreviewImageClick;
+
+  /// Open the link when the link preview title is clicked. Defaults to false.
+  final bool openOnPreviewTitleClick;
 
   /// Padding around initial text widget
   final EdgeInsets? padding;
@@ -205,7 +213,8 @@ class _LinkPreviewState extends State<LinkPreview>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         GestureDetector(
-          onTap: () => _onOpen(data.link!),
+          onTap:
+              widget.openOnPreviewTitleClick ? () => _onOpen(data.link!) : null,
           child: Container(
             padding: EdgeInsets.only(
               bottom: _padding.bottom,
@@ -296,7 +305,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
   Widget _imageWidget(String imageUrl, String linkUrl, double width) {
     return GestureDetector(
-      onTap: () => _onOpen(linkUrl),
+      onTap: widget.openOnPreviewImageClick ? () => _onOpen(linkUrl) : null,
       child: Container(
         constraints: BoxConstraints(
           maxHeight: width,
@@ -341,7 +350,9 @@ class _LinkPreviewState extends State<LinkPreview>
               children: <Widget>[
                 Expanded(
                   child: GestureDetector(
-                    onTap: () => _onOpen(data.link!),
+                    onTap: widget.openOnPreviewTitleClick
+                        ? () => _onOpen(data.link!)
+                        : null,
                     child: Container(
                       margin: const EdgeInsets.only(right: 4),
                       child: Column(
@@ -370,7 +381,7 @@ class _LinkPreviewState extends State<LinkPreview>
         Radius.circular(12),
       ),
       child: GestureDetector(
-        onTap: () => _onOpen(linkUrl),
+        onTap: widget.openOnPreviewImageClick ? () => _onOpen(linkUrl) : null,
         child: SizedBox(
           height: 48,
           width: 48,
