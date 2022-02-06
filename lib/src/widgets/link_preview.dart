@@ -305,7 +305,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
   Widget _linkify() {
     return SelectableLinkify(
-      linkifiers: [const EmailLinkifier(), UrlLinkifier()],
+      linkifiers: const [EmailLinkifier(), UrlLinkifier()],
       linkStyle: widget.linkStyle,
       maxLines: 100,
       minLines: 1,

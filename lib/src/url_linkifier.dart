@@ -22,7 +22,7 @@ final _protocolIdentifierRegex = RegExp(
 /// Used to find links in the text.
 class UrlLinkifier extends Linkifier {
   /// Default constructor
-  UrlLinkifier();
+  const UrlLinkifier();
 
   /// Parses text to find all links inside it
   @override
