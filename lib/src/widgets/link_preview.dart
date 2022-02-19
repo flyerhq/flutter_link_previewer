@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
 import 'package:url_launcher/url_launcher.dart';
-
 import '../url_linkifier.dart' show UrlLinkifier;
 import '../utils.dart' show getPreviewData;
 
@@ -26,8 +25,8 @@ class LinkPreview extends StatefulWidget {
     this.metadataTitleStyle,
     this.onLinkPressed,
     required this.onPreviewDataFetched,
-    this.openOnPreviewImageClick = false,
-    this.openOnPreviewTitleClick = false,
+    this.openOnPreviewImageTap = false,
+    this.openOnPreviewTitleTap = false,
     this.padding,
     required this.previewData,
     required this.text,
@@ -75,11 +74,11 @@ class LinkPreview extends StatefulWidget {
   /// preview data again.
   final void Function(PreviewData) onPreviewDataFetched;
 
-  /// Open the link when the link preview image is clicked. Defaults to false.
-  final bool openOnPreviewImageClick;
+  /// Open the link when the link preview image is tapped. Defaults to false.
+  final bool openOnPreviewImageTap;
 
-  /// Open the link when the link preview title is clicked. Defaults to false.
-  final bool openOnPreviewTitleClick;
+  /// Open the link when the link preview title/description is tapped. Defaults to false.
+  final bool openOnPreviewTitleTap;
 
   /// Padding around initial text widget
   final EdgeInsets? padding;
@@ -221,7 +220,7 @@ class _LinkPreviewState extends State<LinkPreview>
       children: <Widget>[
         GestureDetector(
           onTap:
-              widget.openOnPreviewTitleClick ? () => _onOpen(data.link!) : null,
+              widget.openOnPreviewTitleTap ? () => _onOpen(data.link!) : null,
           child: Container(
             padding: EdgeInsets.only(
               bottom: _padding.bottom,
@@ -312,7 +311,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
   Widget _imageWidget(String imageUrl, String linkUrl, double width) {
     return GestureDetector(
-      onTap: widget.openOnPreviewImageClick ? () => _onOpen(linkUrl) : null,
+      onTap: widget.openOnPreviewImageTap ? () => _onOpen(linkUrl) : null,
       child: Container(
         constraints: BoxConstraints(
           maxHeight: width,
@@ -357,7 +356,7 @@ class _LinkPreviewState extends State<LinkPreview>
               children: <Widget>[
                 Expanded(
                   child: GestureDetector(
-                    onTap: widget.openOnPreviewTitleClick
+                    onTap: widget.openOnPreviewTitleTap
                         ? () => _onOpen(data.link!)
                         : null,
                     child: Container(
@@ -388,7 +387,7 @@ class _LinkPreviewState extends State<LinkPreview>
         Radius.circular(12),
       ),
       child: GestureDetector(
-        onTap: widget.openOnPreviewImageClick ? () => _onOpen(linkUrl) : null,
+        onTap: widget.openOnPreviewImageTap ? () => _onOpen(linkUrl) : null,
         child: SizedBox(
           height: 48,
           width: 48,
