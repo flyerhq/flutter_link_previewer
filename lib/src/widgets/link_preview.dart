@@ -93,15 +93,8 @@ class LinkPreview extends StatefulWidget {
 
 class _LinkPreviewState extends State<LinkPreview>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    duration: widget.animationDuration ?? const Duration(milliseconds: 300),
-    vsync: this,
-  );
-
-  late final Animation<double> _animation = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.easeOutQuad,
-  );
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
 
   bool isFetchingPreviewData = false;
   bool shouldAnimate = false;
@@ -109,6 +102,16 @@ class _LinkPreviewState extends State<LinkPreview>
   @override
   void initState() {
     super.initState();
+
+    _controller = AnimationController(
+      duration: widget.animationDuration ?? const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutQuad,
+    );
 
     didUpdateWidget(widget);
   }
