@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
 import 'package:url_launcher/url_launcher.dart';
+
 import '../url_linkifier.dart' show UrlLinkifier;
 import '../utils.dart' show getPreviewData;
 
@@ -25,6 +26,8 @@ class LinkPreview extends StatefulWidget {
     this.metadataTitleStyle,
     this.onLinkPressed,
     required this.onPreviewDataFetched,
+    this.openOnPreviewImageClick = false,
+    this.openOnPreviewTitleClick = false,
     this.padding,
     required this.previewData,
     required this.text,
@@ -71,6 +74,12 @@ class LinkPreview extends StatefulWidget {
   /// to the [LinkPreview.previewData] so the [LinkPreview] would not fetch
   /// preview data again.
   final void Function(PreviewData) onPreviewDataFetched;
+
+  /// Open the link when the link preview image is clicked. Defaults to false.
+  final bool openOnPreviewImageClick;
+
+  /// Open the link when the link preview title is clicked. Defaults to false.
+  final bool openOnPreviewTitleClick;
 
   /// Padding around initial text widget
   final EdgeInsets? padding;
@@ -182,9 +191,11 @@ class _LinkPreviewState extends State<LinkPreview>
         widget.previewData?.image?.url != null;
   }
 
-  Future<void> _onOpen(LinkableElement link) async {
-    if (await canLaunch(link.url)) {
-      await launch(link.url);
+  Future<void> _onOpen(String url) async {
+    if (widget.onLinkPressed != null) {
+      widget.onLinkPressed!(url);
+    } else if (await canLaunch(url)) {
+      await launch(url);
     }
   }
 
@@ -208,23 +219,27 @@ class _LinkPreviewState extends State<LinkPreview>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(
-            bottom: _padding.bottom,
-            left: _padding.left,
-            right: _padding.right,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              if (data.title != null) _titleWidget(data.title!),
-              if (data.description != null)
-                _descriptionWidget(data.description!),
-            ],
+        GestureDetector(
+          onTap:
+              widget.openOnPreviewTitleClick ? () => _onOpen(data.link!) : null,
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: _padding.bottom,
+              left: _padding.left,
+              right: _padding.right,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (data.title != null) _titleWidget(data.title!),
+                if (data.description != null)
+                  _descriptionWidget(data.description!),
+              ],
+            ),
           ),
         ),
         if (data.image?.url != null && widget.hideImage != true)
-          _imageWidget(data.image!.url, width),
+          _imageWidget(data.image!.url, data.link!, width),
       ],
     );
   }
@@ -295,18 +310,21 @@ class _LinkPreviewState extends State<LinkPreview>
     );
   }
 
-  Widget _imageWidget(String url, double width) {
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: width,
+  Widget _imageWidget(String imageUrl, String linkUrl, double width) {
+    return GestureDetector(
+      onTap: widget.openOnPreviewImageClick ? () => _onOpen(linkUrl) : null,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: width,
+        ),
+        width: width,
+        child: widget.imageBuilder != null
+            ? widget.imageBuilder!(imageUrl)
+            : Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+              ),
       ),
-      width: width,
-      child: widget.imageBuilder != null
-          ? widget.imageBuilder!(url)
-          : Image.network(
-              url,
-              fit: BoxFit.contain,
-            ),
     );
   }
 
@@ -316,9 +334,7 @@ class _LinkPreviewState extends State<LinkPreview>
       linkStyle: widget.linkStyle,
       maxLines: 100,
       minLines: 1,
-      onOpen: widget.onLinkPressed != null
-          ? (element) => widget.onLinkPressed!(element.url)
-          : _onOpen,
+      onOpen: (link) => _onOpen(link.url),
       options: const LinkifyOptions(
         defaultToHttps: true,
         humanize: false,
@@ -340,20 +356,25 @@ class _LinkPreviewState extends State<LinkPreview>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        if (data.title != null) _titleWidget(data.title!),
-                        if (data.description != null)
-                          _descriptionWidget(data.description!),
-                      ],
+                  child: GestureDetector(
+                    onTap: widget.openOnPreviewTitleClick
+                        ? () => _onOpen(data.link!)
+                        : null,
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          if (data.title != null) _titleWidget(data.title!),
+                          if (data.description != null)
+                            _descriptionWidget(data.description!),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 if (data.image?.url != null && widget.hideImage != true)
-                  _minimizedImageWidget(data.image!.url),
+                  _minimizedImageWidget(data.image!.url, data.link!),
               ],
             ),
           ),
@@ -361,17 +382,20 @@ class _LinkPreviewState extends State<LinkPreview>
     );
   }
 
-  Widget _minimizedImageWidget(String url) {
+  Widget _minimizedImageWidget(String imageUrl, String linkUrl) {
     return ClipRRect(
       borderRadius: const BorderRadius.all(
         Radius.circular(12),
       ),
-      child: SizedBox(
-        height: 48,
-        width: 48,
-        child: widget.imageBuilder != null
-            ? widget.imageBuilder!(url)
-            : Image.network(url),
+      child: GestureDetector(
+        onTap: widget.openOnPreviewImageClick ? () => _onOpen(linkUrl) : null,
+        child: SizedBox(
+          height: 48,
+          width: 48,
+          child: widget.imageBuilder != null
+              ? widget.imageBuilder!(imageUrl)
+              : Image.network(imageUrl),
+        ),
       ),
     );
   }
