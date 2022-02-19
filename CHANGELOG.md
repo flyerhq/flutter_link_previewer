@@ -1,3 +1,9 @@
+## 2.6.3
+
+- Fixed `looking up deactivated ancestor is unsafe` error. Thanks @felixgabler for the PR!
+- Add `openOnPreviewImageTap` and `openOnPreviewTitleTap` - allows to open link URL when tapped on the preview image and/or preview title/description. Thanks @felixgabler for the PR!
+- Update to Flutter 2.10.2. Requires Dart >= 2.16.0.
+
 ## 2.6.2
 
 - Use utf8 codec to parse chinese symbols
