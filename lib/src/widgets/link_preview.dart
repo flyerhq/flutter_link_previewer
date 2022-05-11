@@ -32,6 +32,7 @@ class LinkPreview extends StatefulWidget {
     required this.text,
     this.textStyle,
     this.textWidget,
+    this.userAgent,
     required this.width,
   }) : super(key: key);
 
@@ -95,6 +96,9 @@ class LinkPreview extends StatefulWidget {
 
   /// Widget to display above the preview. If null, defaults to a linkified [text].
   final Widget? textWidget;
+
+  /// User agent to send as GET header when requesting link preview url.
+  final String? userAgent;
 
   /// Width of the [LinkPreview] widget
   final double width;
@@ -160,7 +164,11 @@ class _LinkPreviewState extends State<LinkPreview>
       isFetchingPreviewData = true;
     });
 
-    final previewData = await getPreviewData(text, proxy: widget.corsProxy);
+    final previewData = await getPreviewData(
+      text,
+      proxy: widget.corsProxy,
+      userAgent: widget.userAgent,
+    );
     _handlePreviewDataFetched(previewData);
     return previewData;
   }
