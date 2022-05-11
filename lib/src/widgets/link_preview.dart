@@ -193,8 +193,11 @@ class _LinkPreviewState extends State<LinkPreview>
   Future<void> _onOpen(String url) async {
     if (widget.onLinkPressed != null) {
       widget.onLinkPressed!(url);
-    } else if (await canLaunch(url)) {
-      await launch(url);
+    } else {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     }
   }
 
