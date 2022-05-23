@@ -184,7 +184,7 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
     );
 
     if (!url.toLowerCase().startsWith('http')) {
-      url = 'https://' + url;
+      url = 'https://$url';
     }
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
