@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:charset_converter/charset_converter.dart';
 import 'package:flutter/material.dart' hide Element;
 import 'package:flutter_chat_types/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
@@ -189,7 +190,17 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
     final response = await http.get(uri);
-    final document = parser.parse(utf8.decode(response.bodyBytes));
+    var document;
+    try {
+      document = parser.parse(utf8.decode(response.bodyBytes));
+    } catch (e) {
+      try {
+        document = parser
+            .parse(await CharsetConverter.decode('cp949', response.bodyBytes));
+      } catch (e) {
+        document = parser.parse(response.body);
+      }
+    }
 
     final imageRegexp = RegExp(regexImageContentType);
 

@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, PreviewData> datas = {};
 
   List<String> get urls => const [
-        'https://flyer.chat',
+        'https://cafe.naver.com/joonggonara.cafe',
         'github.com/flyerhq',
       ];
 
