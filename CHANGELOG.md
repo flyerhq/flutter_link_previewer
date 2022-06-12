@@ -1,3 +1,8 @@
+## 3.0.0
+
+- Update to Flutter 3
+- Add `userAgent` parameter. Thanks @felixgabler for the PR!
+
 ## 2.6.6
 
 - Update dependencies
