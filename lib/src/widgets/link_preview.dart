@@ -12,7 +12,7 @@ import '../utils.dart' show getPreviewData;
 class LinkPreview extends StatefulWidget {
   /// Creates [LinkPreview]
   const LinkPreview({
-    Key? key,
+    super.key,
     this.animationDuration,
     this.corsProxy,
     this.enableAnimation = false,
@@ -34,7 +34,7 @@ class LinkPreview extends StatefulWidget {
     this.textWidget,
     this.userAgent,
     required this.width,
-  }) : super(key: key);
+  });
 
   /// Expand animation duration
   final Duration? animationDuration;
@@ -104,7 +104,7 @@ class LinkPreview extends StatefulWidget {
   final double width;
 
   @override
-  _LinkPreviewState createState() => _LinkPreviewState();
+  State<LinkPreview> createState() => _LinkPreviewState();
 }
 
 class _LinkPreviewState extends State<LinkPreview>
@@ -201,8 +201,11 @@ class _LinkPreviewState extends State<LinkPreview>
   Future<void> _onOpen(String url) async {
     if (widget.onLinkPressed != null) {
       widget.onLinkPressed!(url);
-    } else if (await canLaunch(url)) {
-      await launch(url);
+    } else {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     }
   }
 
@@ -216,7 +219,7 @@ class _LinkPreviewState extends State<LinkPreview>
   }
 
   Widget _bodyWidget(PreviewData data, double width) {
-    final _padding = widget.padding ??
+    final padding = widget.padding ??
         const EdgeInsets.only(
           bottom: 16,
           left: 24,
@@ -231,9 +234,9 @@ class _LinkPreviewState extends State<LinkPreview>
               widget.openOnPreviewTitleTap ? () => _onOpen(data.link!) : null,
           child: Container(
             padding: EdgeInsets.only(
-              bottom: _padding.bottom,
-              left: _padding.left,
-              right: _padding.right,
+              bottom: padding.bottom,
+              left: padding.left,
+              right: padding.right,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,7 +259,7 @@ class _LinkPreviewState extends State<LinkPreview>
     bool withPadding = false,
     Widget? child,
   }) {
-    final _padding = widget.padding ??
+    final padding = widget.padding ??
         const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 16,
@@ -266,7 +269,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
     return Container(
       constraints: BoxConstraints(maxWidth: widget.width),
-      padding: withPadding ? _padding : null,
+      padding: withPadding ? padding : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -274,9 +277,9 @@ class _LinkPreviewState extends State<LinkPreview>
             padding: withPadding
                 ? const EdgeInsets.all(0)
                 : EdgeInsets.only(
-                    left: _padding.left,
-                    right: _padding.right,
-                    top: _padding.top,
+                    left: padding.left,
+                    right: padding.right,
+                    top: padding.top,
                     bottom: _hasOnlyImage() ? 0 : 16,
                   ),
             child: Column(
@@ -423,21 +426,21 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
-    final _previewData = widget.previewData;
+    final previewData = widget.previewData;
 
-    if (_previewData != null && _hasData(_previewData)) {
+    if (previewData != null && _hasData(previewData)) {
       final aspectRatio = widget.previewData!.image == null
           ? null
           : widget.previewData!.image!.width /
               widget.previewData!.image!.height;
 
-      final _width = aspectRatio == 1 ? widget.width : widget.width - 32;
+      final width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
       return _containerWidget(
         animate: shouldAnimate,
         child: aspectRatio == 1
-            ? _minimizedBodyWidget(_previewData)
-            : _bodyWidget(_previewData, _width),
+            ? _minimizedBodyWidget(previewData)
+            : _bodyWidget(previewData, width),
         withPadding: aspectRatio == 1,
       );
     } else {

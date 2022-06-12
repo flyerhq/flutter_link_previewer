@@ -190,7 +190,7 @@ Future<PreviewData> getPreviewData(
     );
 
     if (!url.toLowerCase().startsWith('http')) {
-      url = 'https://' + url;
+      url = 'https://$url';
     }
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
