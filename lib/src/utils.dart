@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart' hide Element;
 import 'package:flutter_chat_types/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
 import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
+
 import 'types.dart';
 
 String _calculateUrl(String baseUrl, String? proxy) {
@@ -156,7 +158,11 @@ Future<String> _getBiggestImageUrl(
 }
 
 /// Parses provided text and returns [PreviewData] for the first found link
-Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
+Future<PreviewData> getPreviewData(
+  String text, {
+  String? proxy,
+  String? userAgent,
+}) async {
   const previewData = PreviewData();
 
   String? previewDataDescription;
@@ -188,7 +194,8 @@ Future<PreviewData> getPreviewData(String text, {String? proxy}) async {
     }
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
-    final response = await http.get(uri);
+    final response = await http
+        .get(uri, headers: {if (userAgent != null) 'User-Agent': userAgent});
     final document = parser.parse(utf8.decode(response.bodyBytes));
 
     final imageRegexp = RegExp(regexImageContentType);
