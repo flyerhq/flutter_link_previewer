@@ -51,11 +51,10 @@ String? _getTitle(Document document) {
       _getMetaContent(document, 'og:site_name');
 }
 
-String? _getDescription(Document document) {
-  return _getMetaContent(document, 'og:description') ??
-      _getMetaContent(document, 'description') ??
-      _getMetaContent(document, 'twitter:description');
-}
+String? _getDescription(Document document) =>
+    _getMetaContent(document, 'og:description') ??
+    _getMetaContent(document, 'description') ??
+    _getMetaContent(document, 'twitter:description');
 
 List<String> _getImageUrls(Document document, String baseUrl) {
   final meta = document.getElementsByTagName('meta');
@@ -112,11 +111,11 @@ Future<Size> _getImageSize(String url) {
   final stream = Image.network(url).image.resolve(ImageConfiguration.empty);
   late ImageStreamListener streamListener;
 
-  onError(Object error, StackTrace? stackTrace) {
+  void onError(Object error, StackTrace? stackTrace) {
     completer.completeError(error, stackTrace);
   }
 
-  listener(ImageInfo info, bool _) {
+  void listener(ImageInfo info, bool _) {
     if (!completer.isCompleted) {
       completer.complete(
         Size(
@@ -157,7 +156,7 @@ Future<String> _getBiggestImageUrl(
   return currentUrl;
 }
 
-/// Parses provided text and returns [PreviewData] for the first found link
+/// Parses provided text and returns [PreviewData] for the first found link.
 Future<PreviewData> getPreviewData(
   String text, {
   String? proxy,
@@ -260,12 +259,12 @@ Future<PreviewData> getPreviewData(
   }
 }
 
-/// Regex to check if text is email
+/// Regex to check if text is email.
 const regexEmail = r'([a-zA-Z0-9+._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)';
 
-/// Regex to check if content type is an image
+/// Regex to check if content type is an image.
 const regexImageContentType = r'image\/*';
 
-/// Regex to find all links in the text
+/// Regex to find all links in the text.
 const regexLink =
     r'((http|ftp|https):\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?';

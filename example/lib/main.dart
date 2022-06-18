@@ -12,11 +12,9 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MyHomePage(),
-    );
-  }
+  Widget build(BuildContext context) => const MaterialApp(
+        home: MyHomePage(),
+      );
 }
 
 class MyHomePage extends StatefulWidget {
@@ -30,8 +28,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, PreviewData> datas = {};
 
   List<String> get urls => const [
-        'https://flyer.chat',
         'github.com/flyerhq',
+        'https://thereverseland.com',
       ];
 
   @override

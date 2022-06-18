@@ -6,7 +6,7 @@
 
 URL preview extracted from the provided text with basic customization and ability to render from cached data.
 
-<img src="https://user-images.githubusercontent.com/14123304/117151394-5285fd80-adb9-11eb-857b-3c21558ecd24.png" width="428" height="926">
+<img src="https://user-images.githubusercontent.com/14123304/174437317-4f3c6a90-4639-4b4a-80e3-9df955ab0e34.png" width="428" height="926">
 
 ## Getting Started
 

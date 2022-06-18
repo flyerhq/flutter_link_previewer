@@ -1,17 +1,17 @@
 import 'package:meta/meta.dart';
 
-/// Represents the size object
+/// Represents the size object.
 @immutable
 class Size {
-  /// Creates [Size] from width and height
+  /// Creates [Size] from width and height.
   const Size({
     required this.height,
     required this.width,
   });
 
-  /// Height
+  /// Height.
   final double height;
 
-  /// Width
+  /// Width.
   final double width;
 }

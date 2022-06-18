@@ -21,12 +21,15 @@ final _protocolIdentifierRegex = RegExp(
 /// Utility class that implements [Linkifier.parse] method.
 /// Used to find links in the text.
 class UrlLinkifier extends Linkifier {
-  /// Default constructor
+  /// Default constructor.
   const UrlLinkifier();
 
-  /// Parses text to find all links inside it
+  /// Parses text to find all links inside it.
   @override
-  List<LinkifyElement> parse(elements, options) {
+  List<LinkifyElement> parse(
+    List<LinkifyElement> elements,
+    LinkifyOptions options,
+  ) {
     final list = <LinkifyElement>[];
 
     for (final element in elements) {
@@ -98,24 +101,23 @@ class UrlLinkifier extends Linkifier {
   }
 }
 
-/// Represents an element containing a link
+/// Represents an element containing a link.
 @immutable
 class UrlElement extends LinkableElement {
-  /// Creates [UrlElement]
+  /// Creates [UrlElement].
   UrlElement(String url, [String? text]) : super(text, url);
-
-  @override
-  String toString() {
-    return "LinkElement: '$url' ($text)";
-  }
-
-  @override
-  bool operator ==(other) => equals(other);
-
-  @override
-  bool equals(other) => other is UrlElement && super.equals(other);
 
   @override
   // ignore: unnecessary_overrides
   int get hashCode => super.hashCode;
+
+  @override
+  bool operator ==(Object other) => equals(other);
+
+  @override
+  // ignore: type_annotate_public_apis
+  bool equals(other) => other is UrlElement && super.equals(other);
+
+  @override
+  String toString() => "LinkElement: '$url' ($text)";
 }

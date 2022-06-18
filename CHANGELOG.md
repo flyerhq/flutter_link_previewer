@@ -1,3 +1,7 @@
+## 3.0.1
+
+- Code refactor
+
 ## 3.0.0
 
 - Update to Flutter 3
