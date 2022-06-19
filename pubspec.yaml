@@ -13,7 +13,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_chat_types: ^3.4.2
+  flutter_chat_types: ^3.4.3
   flutter_linkify: ^5.0.2
   html: ^0.15.0
   http: ^0.13.4
