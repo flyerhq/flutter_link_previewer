@@ -160,6 +160,7 @@ Future<String> _getBiggestImageUrl(
 Future<PreviewData> getPreviewData(
   String text, {
   String? proxy,
+  Duration? requestTimeout,
   String? userAgent,
 }) async {
   const previewData = PreviewData();
@@ -193,8 +194,9 @@ Future<PreviewData> getPreviewData(
     }
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
-    final response = await http
-        .get(uri, headers: {if (userAgent != null) 'User-Agent': userAgent});
+    final response = await http.get(uri, headers: {
+      'User-Agent': userAgent ?? 'WhatsApp/2',
+    }).timeout(requestTimeout ?? const Duration(seconds: 5));
     final document = parser.parse(utf8.decode(response.bodyBytes));
 
     final imageRegexp = RegExp(regexImageContentType);

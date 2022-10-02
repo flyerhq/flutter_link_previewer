@@ -29,7 +29,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<String> get urls => const [
         'github.com/flyerhq',
-        'https://thereverseland.com',
+        'https://u24.gov.ua',
+        'https://twitter.com/SpaceX/status/1564975288655630338',
       ];
 
   @override

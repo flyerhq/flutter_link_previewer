@@ -1,3 +1,9 @@
+## 3.1.0
+
+- Update to Flutter 3.3.3
+- Set `WhatsApp/2` as a default user agent to parse more links
+- Added `requestTimeout` parameter, that will cancel the request if timeout is reached. Defaults to 5 seconds.
+
 ## 3.0.1
 
 - Code refactor

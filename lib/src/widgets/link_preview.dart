@@ -30,6 +30,7 @@ class LinkPreview extends StatefulWidget {
     this.openOnPreviewTitleTap = false,
     this.padding,
     required this.previewData,
+    this.requestTimeout,
     required this.text,
     this.textStyle,
     this.textWidget,
@@ -88,6 +89,9 @@ class LinkPreview extends StatefulWidget {
   /// Pass saved [PreviewData] here so [LinkPreview] would not fetch preview
   /// data again
   final PreviewData? previewData;
+
+  /// Request timeout after which the request will be cancelled. Defaults to 5 seconds.
+  final Duration? requestTimeout;
 
   /// Text used for parsing.
   final String text;
@@ -299,6 +303,7 @@ class _LinkPreviewState extends State<LinkPreview>
     final previewData = await getPreviewData(
       text,
       proxy: widget.corsProxy,
+      requestTimeout: widget.requestTimeout,
       userAgent: widget.userAgent,
     );
     _handlePreviewDataFetched(previewData);

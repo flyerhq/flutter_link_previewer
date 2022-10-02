@@ -4,7 +4,7 @@
 [![build](https://github.com/flyerhq/flutter_link_previewer/workflows/build/badge.svg)](https://github.com/flyerhq/flutter_link_previewer/actions?query=workflow%3Abuild)
 [![CodeFactor](https://www.codefactor.io/repository/github/flyerhq/flutter_link_previewer/badge)](https://www.codefactor.io/repository/github/flyerhq/flutter_link_previewer)
 
-URL preview extracted from the provided text with basic customization and ability to render from cached data.
+Customizable link and URL preview extracted from the provided text with the ability to render from the cache.
 
 <br>
 
@@ -14,7 +14,7 @@ URL preview extracted from the provided text with basic customization and abilit
 
 <br>
 
-<img src="https://user-images.githubusercontent.com/14123304/174437317-4f3c6a90-4639-4b4a-80e3-9df955ab0e34.png" width="428" height="926">
+<img src="https://user-images.githubusercontent.com/14123304/193461843-6ec34142-dc2a-428d-9b11-9b3a35f265c6.png" width="430" height="932">
 
 ## Getting Started
 
