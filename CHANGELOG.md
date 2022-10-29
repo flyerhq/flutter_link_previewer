@@ -1,3 +1,7 @@
+## 3.2.0
+
+- Update dependencies. Requires Dart >= 2.18.0.
+
 ## 3.1.0
 
 - Update to Flutter 3.3.3

@@ -4,7 +4,7 @@
 [![build](https://github.com/flyerhq/flutter_link_previewer/workflows/build/badge.svg)](https://github.com/flyerhq/flutter_link_previewer/actions?query=workflow%3Abuild)
 [![CodeFactor](https://www.codefactor.io/repository/github/flyerhq/flutter_link_previewer/badge)](https://www.codefactor.io/repository/github/flyerhq/flutter_link_previewer)
 
-Customizable link and URL preview extracted from the provided text with the ability to render from the cache.
+Customizable link and URL preview extracted from the provided text with the ability to render from the cache. Ideal for chat applications.
 
 <br>
 
