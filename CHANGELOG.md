@@ -1,5 +1,7 @@
 ## 3.2.1
 
+- Add `previewBuilder` to allow you to create your own implementation of a link preview. Thanks @CatEatFishs for suggestion!
+- Fix numbers being parsed as urls. Thanks @claptv for noticing!
 - Update dependencies. Requires Dart >= 2.19.0.
 
 ## 3.2.0
