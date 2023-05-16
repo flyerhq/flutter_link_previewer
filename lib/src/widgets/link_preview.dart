@@ -29,6 +29,7 @@ class LinkPreview extends StatefulWidget {
     this.openOnPreviewImageTap = false,
     this.openOnPreviewTitleTap = false,
     this.padding,
+    this.previewBuilder,
     required this.previewData,
     this.requestTimeout,
     required this.text,
@@ -85,6 +86,9 @@ class LinkPreview extends StatefulWidget {
 
   /// Padding around initial text widget.
   final EdgeInsets? padding;
+
+  /// Function that allows you to build a custom link preview.
+  final Widget Function(BuildContext, PreviewData)? previewBuilder;
 
   /// Pass saved [PreviewData] here so [LinkPreview] would not fetch preview
   /// data again.
@@ -422,20 +426,24 @@ class _LinkPreviewState extends State<LinkPreview>
     final previewData = widget.previewData;
 
     if (previewData != null && _hasData(previewData)) {
-      final aspectRatio = widget.previewData!.image == null
-          ? null
-          : widget.previewData!.image!.width /
-              widget.previewData!.image!.height;
+      if (widget.previewBuilder != null) {
+        return widget.previewBuilder!(context, previewData);
+      } else {
+        final aspectRatio = widget.previewData!.image == null
+            ? null
+            : widget.previewData!.image!.width /
+                widget.previewData!.image!.height;
 
-      final width = aspectRatio == 1 ? widget.width : widget.width - 32;
+        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
-      return _containerWidget(
-        animate: shouldAnimate,
-        child: aspectRatio == 1
-            ? _minimizedBodyWidget(previewData)
-            : _bodyWidget(previewData, width),
-        withPadding: aspectRatio == 1,
-      );
+        return _containerWidget(
+          animate: shouldAnimate,
+          child: aspectRatio == 1
+              ? _minimizedBodyWidget(previewData)
+              : _bodyWidget(previewData, width),
+          withPadding: aspectRatio == 1,
+        );
+      }
     } else {
       return _containerWidget(animate: false);
     }
