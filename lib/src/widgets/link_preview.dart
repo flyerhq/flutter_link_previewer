@@ -87,7 +87,7 @@ class LinkPreview extends StatefulWidget {
   final EdgeInsets? padding;
 
   /// Pass saved [PreviewData] here so [LinkPreview] would not fetch preview
-  /// data again
+  /// data again.
   final PreviewData? previewData;
 
   /// Request timeout after which the request will be cancelled. Defaults to 5 seconds.
@@ -135,57 +135,6 @@ class _LinkPreviewState extends State<LinkPreview>
     );
 
     didUpdateWidget(widget);
-  }
-
-  @override
-  void didUpdateWidget(covariant LinkPreview oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (!isFetchingPreviewData && widget.previewData == null) {
-      _fetchData(widget.text);
-    }
-
-    if (widget.previewData != null && oldWidget.previewData == null) {
-      setState(() {
-        shouldAnimate = true;
-      });
-      _controller.reset();
-      _controller.forward();
-    } else if (widget.previewData != null) {
-      setState(() {
-        shouldAnimate = false;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final previewData = widget.previewData;
-
-    if (previewData != null && _hasData(previewData)) {
-      final aspectRatio = widget.previewData!.image == null
-          ? null
-          : widget.previewData!.image!.width /
-              widget.previewData!.image!.height;
-
-      final width = aspectRatio == 1 ? widget.width : widget.width - 32;
-
-      return _containerWidget(
-        animate: shouldAnimate,
-        child: aspectRatio == 1
-            ? _minimizedBodyWidget(previewData)
-            : _bodyWidget(previewData, width),
-        withPadding: aspectRatio == 1,
-      );
-    } else {
-      return _containerWidget(animate: false);
-    }
   }
 
   Widget _animated(Widget child) => SizeTransition(
@@ -439,5 +388,56 @@ class _LinkPreviewState extends State<LinkPreview>
       overflow: TextOverflow.ellipsis,
       style: style,
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant LinkPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (!isFetchingPreviewData && widget.previewData == null) {
+      _fetchData(widget.text);
+    }
+
+    if (widget.previewData != null && oldWidget.previewData == null) {
+      setState(() {
+        shouldAnimate = true;
+      });
+      _controller.reset();
+      _controller.forward();
+    } else if (widget.previewData != null) {
+      setState(() {
+        shouldAnimate = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final previewData = widget.previewData;
+
+    if (previewData != null && _hasData(previewData)) {
+      final aspectRatio = widget.previewData!.image == null
+          ? null
+          : widget.previewData!.image!.width /
+              widget.previewData!.image!.height;
+
+      final width = aspectRatio == 1 ? widget.width : widget.width - 32;
+
+      return _containerWidget(
+        animate: shouldAnimate,
+        child: aspectRatio == 1
+            ? _minimizedBodyWidget(previewData)
+            : _bodyWidget(previewData, width),
+        withPadding: aspectRatio == 1,
+      );
+    } else {
+      return _containerWidget(animate: false);
+    }
   }
 }

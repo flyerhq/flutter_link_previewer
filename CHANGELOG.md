@@ -1,3 +1,7 @@
+## 3.2.1
+
+- Update dependencies. Requires Dart >= 2.19.0.
+
 ## 3.2.0
 
 - Update dependencies. Requires Dart >= 2.18.0.
