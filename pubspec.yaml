@@ -17,7 +17,7 @@ dependencies:
   flutter_chat_types: ^3.6.1
   flutter_linkify: ^6.0.0
   html: ^0.15.3
-  http: ^0.13.6
+  http: ^1.0.0
   linkify: ^5.0.0
   meta: ^1.9.1
   url_launcher: ^6.1.11
