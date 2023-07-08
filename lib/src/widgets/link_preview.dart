@@ -306,11 +306,11 @@ class _LinkPreviewState extends State<LinkPreview>
       requestTimeout: widget.requestTimeout,
       userAgent: widget.userAgent,
     );
-    _handlePreviewDataFetched(previewData);
+    await _handlePreviewDataFetched(previewData);
     return previewData;
   }
 
-  void _handlePreviewDataFetched(PreviewData previewData) async {
+  Future<void> _handlePreviewDataFetched(PreviewData previewData) async {
     await Future.delayed(
       widget.animationDuration ?? const Duration(milliseconds: 300),
     );

@@ -1,69 +1,116 @@
-analyzer:
-  plugins:
-    - dart_code_metrics
-
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
-
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+analyzer:
+  language:
+    strict-raw-types: false
+  errors:
+    todo: ignore
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.gr.dart"
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - "**/*.module.dart"
+
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at
-  # https://dart-lang.github.io/linter/lints/index.html.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    - unnecessary_const
     - always_declare_return_types
-    - avoid_unused_constructor_parameters
-    - directives_ordering
-    - omit_local_variable_types
-    - prefer_expression_function_bodies
-    - prefer_final_fields
-    - prefer_final_locals
+    # - always_put_control_body_on_new_line
+    - always_require_non_null_named_parameters
     - prefer_relative_imports
+    - valid_regexps
+    - void_checks
+    - annotate_overrides
     - prefer_single_quotes
-    - sized_box_for_whitespace
+    - avoid_empty_else
+    - avoid_print
+    - avoid_field_initializers_in_const_classes
+    - avoid_init_to_null
+    - avoid_null_checks_in_equality_operators
+    - avoid_returning_null
+    - avoid_returning_null_for_void
+    - avoid_return_types_on_setters
+    - avoid_returning_null_for_future
+    - avoid_returning_this
+    - avoid_single_cascade_in_expression_statements
+    - await_only_futures
+    - camel_case_types
+    - avoid_void_async
+    # - cascade_invocations
+    - close_sinks
+    - cancel_subscriptions
+    # - constant_identifier_names
+    - curly_braces_in_flow_control_structures
+    - directives_ordering
+    - prefer_spread_collections
+    - prefer_constructors_over_static_methods
+    - empty_statements
+    - empty_catches
+    - empty_constructor_bodies
+    - unnecessary_getters_setters
+    - file_names
+    - implementation_imports
+    - library_names
+    - library_prefixes
+    - literal_only_boolean_expressions
+    - no_adjacent_strings_in_list
+    - no_duplicate_case_values
+    - null_closures
+    - only_throw_errors
+    - package_names
+    - package_prefixed_library_names
+    - prefer_adjacent_string_concatenation
+    - prefer_asserts_in_initializer_lists
+    - prefer_asserts_with_message
+    - prefer_conditional_assignment
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_contains
+    - prefer_final_fields
+    - prefer_final_in_for_each
+    - prefer_final_locals
+    - prefer_for_elements_to_map_fromIterable
+    - prefer_generic_function_type_aliases
+    - prefer_if_null_operators
+    - prefer_initializing_formals
+    - prefer_inlined_adds
+    - prefer_interpolation_to_compose_strings
+    - prefer_iterable_whereType
+    - prefer_null_aware_operators
+    - prefer_typing_uninitialized_variables
+    - provide_deprecation_message
+    - recursive_getters
+    - slash_for_doc_comments
     - sort_child_properties_last
-    - sort_pub_dependencies
+    - sort_unnamed_constructors_first
+    - test_types_in_equals
     - type_annotate_public_apis
+    - type_init_formals
     - unawaited_futures
-    - use_named_constants
-    - use_super_parameters
+    - unnecessary_await_in_return
+    - unnecessary_brace_in_string_interps
+    - unnecessary_new
+    - unnecessary_null_aware_assignments
+    - unnecessary_null_in_if_null_operators
+    - unnecessary_overrides
+    - unnecessary_parenthesis
+    - unnecessary_this
+    - unrelated_type_equality_checks
+    - unsafe_html
+    - use_full_hex_values_for_flutter_colors
+    - use_rethrow_when_possible
+    - use_setters_to_change_properties
+    - use_string_buffers
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
-
-dart_code_metrics:
-  rules:
-    - always-remove-listener
-    - avoid-unused-parameters
-    - format-comment
-    - member-ordering:
-        alphabetize: false
-        order:
-          - constructors
-          - public-fields
-          - public-getters
-          - public-setters
-          - private-fields
-          - private-getters
-          - private-setters
-          - public-methods
-          - private-methods
-    - no-boolean-literal-compare
-    - prefer-trailing-comma
+    # nice to have
+    - avoid_double_and_int_checks
+    - avoid_bool_literals_in_conditional_expressions
+    # - avoid_function_literals_in_foreach_calls
+    - unnecessary_lambdas
+    - flutter_style_todos
+    - join_return_with_assignment
+    # - lines_longer_than_80_chars
+    - prefer_foreach
+    - use_to_and_as_if_applicable
