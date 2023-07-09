@@ -33,18 +33,18 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
-  flutter_chat_types: ^3.6.1
+  flutter_chat_types: ^3.6.2
   flutter_link_previewer:
     path: ../
 
 dev_dependencies:
-  dart_code_metrics: ^5.7.3
+  dart_code_metrics: ^5.7.5
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.1
+  flutter_lints: ^2.0.2
   flutter_test:
     sdk: flutter
 

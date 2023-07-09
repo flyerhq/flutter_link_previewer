@@ -1,3 +1,7 @@
+## 3.2.2
+
+- Update dependencies
+
 ## 3.2.1
 
 - Add `previewBuilder` to allow you to create your own implementation of a link preview. Thanks @CatEatFishs for suggestion!

@@ -3,7 +3,7 @@ description: >
   Customizable link and URL preview extracted from the
   provided text with the ability to render from the cache. Ideal
   for chat applications.
-version: 3.2.1
+version: 3.2.2
 homepage: https://flyer.chat
 repository: https://github.com/flyerhq/flutter_link_previewer
 
@@ -14,16 +14,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_chat_types: ^3.6.1
+  flutter_chat_types: ^3.6.2
   flutter_linkify: ^6.0.0
-  html: ^0.15.3
-  http: ^1.1.0
+  html: ^0.15.4
+  http: '>=0.13.6 <2.0.0'
   linkify: ^5.0.0
-  meta: ^1.9.1
-  url_launcher: ^6.1.11
+  meta: '>=1.8.0 <2.0.0'
+  url_launcher: ^6.1.12
 
 dev_dependencies:
-  dart_code_metrics: ^5.7.3
-  flutter_lints: ^2.0.1
+  dart_code_metrics: ^5.7.5
+  flutter_lints: ^2.0.2
   flutter_test:
     sdk: flutter
