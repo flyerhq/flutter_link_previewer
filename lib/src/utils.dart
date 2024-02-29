@@ -161,7 +161,7 @@ Future<PreviewData> getPreviewData(
   String text, {
   String? proxy,
   Duration? requestTimeout,
-  String? userAgent,
+  Map<String, String>? requestHeaders,
 }) async {
   const previewData = PreviewData();
 
@@ -194,9 +194,9 @@ Future<PreviewData> getPreviewData(
     }
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
-    final response = await http.get(uri, headers: {
-      'User-Agent': userAgent ?? 'WhatsApp/2',
-    }).timeout(requestTimeout ?? const Duration(seconds: 5));
+    final response = await http
+        .get(uri, headers: requestHeaders)
+        .timeout(requestTimeout ?? const Duration(seconds: 5));
     final document = parser.parse(utf8.decode(response.bodyBytes));
 
     final imageRegexp = RegExp(regexImageContentType);

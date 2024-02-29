@@ -37,6 +37,7 @@ class LinkPreview extends StatefulWidget {
     this.textWidget,
     this.userAgent,
     required this.width,
+    this.requestHeaders,
   });
 
   /// Expand animation duration.
@@ -93,6 +94,9 @@ class LinkPreview extends StatefulWidget {
   /// Pass saved [PreviewData] here so [LinkPreview] would not fetch preview
   /// data again.
   final PreviewData? previewData;
+
+  /// Custom headers to send with the request.
+  final Map<String, String>? requestHeaders;
 
   /// Request timeout after which the request will be cancelled. Defaults to 5 seconds.
   final Duration? requestTimeout;
@@ -257,7 +261,7 @@ class _LinkPreviewState extends State<LinkPreview>
       text,
       proxy: widget.corsProxy,
       requestTimeout: widget.requestTimeout,
-      userAgent: widget.userAgent,
+      requestHeaders: widget.requestHeaders,
     );
     await _handlePreviewDataFetched(previewData);
     return previewData;
