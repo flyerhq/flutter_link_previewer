@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart' hide Element;
 import 'package:flutter_chat_types/flutter_chat_types.dart'
@@ -7,6 +8,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart'
 import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
+import 'dart:ui' as ui;
 
 import 'types.dart';
 
@@ -133,6 +135,14 @@ Future<Size> _getImageSize(String url) {
   return completer.future;
 }
 
+Future<Size> _getImageSizeFromBytes(Uint8List bytes) async {
+  var image = await decodeImageFromList(bytes);
+  return Size(
+    height: image.height.toDouble(),
+    width: image.width.toDouble(),
+  );
+}
+
 Future<String> _getBiggestImageUrl(
   List<String> imageUrls,
   String? proxy,
@@ -197,12 +207,12 @@ Future<PreviewData> getPreviewData(
     final response = await http.get(uri, headers: {
       'User-Agent': userAgent ?? 'WhatsApp/2',
     }).timeout(requestTimeout ?? const Duration(seconds: 5));
-    final document = parser.parse(utf8.decode(response.bodyBytes));
 
     final imageRegexp = RegExp(regexImageContentType);
 
     if (imageRegexp.hasMatch(response.headers['content-type'] ?? '')) {
-      final imageSize = await _getImageSize(previewDataUrl);
+      final imageSize = await _getImageSizeFromBytes(response.bodyBytes);
+
       previewDataImage = PreviewDataImage(
         height: imageSize.height,
         url: previewDataUrl,
@@ -214,6 +224,7 @@ Future<PreviewData> getPreviewData(
       );
     }
 
+    final document = parser.parse(utf8.decode(response.bodyBytes));
     if (!_hasUTF8Charset(document)) {
       return previewData;
     }
