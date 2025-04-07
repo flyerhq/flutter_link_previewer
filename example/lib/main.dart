@@ -12,9 +12,7 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) => const MaterialApp(
-        home: MyHomePage(),
-      );
+  Widget build(BuildContext context) => const MaterialApp(home: MyHomePage());
 }
 
 class MyHomePage extends StatefulWidget {
@@ -28,10 +26,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<String, PreviewData> datas = {};
 
   List<String> get urls => const [
-        'github.com/flyerhq',
-        'https://u24.gov.ua',
-        'https://twitter.com/SpaceX/status/1564975288655630338',
-      ];
+    'github.com/flyerhq',
+    'https://u24.gov.ua',
+    'https://twitter.com/SpaceX/status/1564975288655630338',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -41,38 +39,32 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.white,
       body: ListView.builder(
         itemCount: urls.length,
-        itemBuilder: (context, index) => Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            key: ValueKey(urls[index]),
-            margin: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-              color: Color(0xfff7f7f8),
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
-              ),
-              child: LinkPreview(
-                enableAnimation: true,
-                onPreviewDataFetched: (data) {
-                  setState(() {
-                    datas = {
-                      ...datas,
-                      urls[index]: data,
-                    };
-                  });
-                },
-                previewData: datas[urls[index]],
-                text: urls[index],
-                width: MediaQuery.of(context).size.width,
+        itemBuilder:
+            (context, index) => Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                key: ValueKey(urls[index]),
+                margin: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  color: Color(0xfff7f7f8),
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  child: LinkPreview(
+                    enableAnimation: true,
+                    onPreviewDataFetched: (data) {
+                      setState(() {
+                        datas = {...datas, urls[index]: data};
+                      });
+                    },
+                    previewData: datas[urls[index]],
+                    text: urls[index],
+                    width: MediaQuery.of(context).size.width,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
       ),
     );
   }

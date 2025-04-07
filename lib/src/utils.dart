@@ -8,7 +8,6 @@ import 'package:flutter_chat_types/flutter_chat_types.dart'
 import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
-import 'dart:ui' as ui;
 
 import 'types.dart';
 
@@ -136,7 +135,7 @@ Future<Size> _getImageSize(String url) {
 }
 
 Future<Size> _getImageSizeFromBytes(Uint8List bytes) async {
-  var image = await decodeImageFromList(bytes);
+  final image = await decodeImageFromList(bytes);
   return Size(
     height: image.height.toDouble(),
     width: image.width.toDouble(),
