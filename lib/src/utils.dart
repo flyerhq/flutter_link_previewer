@@ -135,7 +135,7 @@ Future<Size> _getImageSize(String url) {
 }
 
 Future<Size> _getImageSizeFromBytes(Uint8List bytes) async {
-  var image = await decodeImageFromList(bytes);
+  final image = await decodeImageFromList(bytes);
   return Size(
     height: image.height.toDouble(),
     width: image.width.toDouble(),
