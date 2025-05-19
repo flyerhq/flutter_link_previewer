@@ -33,7 +33,12 @@ dependencies:
   cupertino_icons: ^1.0.5
   flutter:
     sdk: flutter
-  flutter_chat_types: ^3.6.2
+  flutter_chat_core:
+    git:
+      # TODO link to correct chat_core version once release
+      url: git@github.com:nicolasbraun/flutter_chat_ui
+      path: packages/flutter_chat_core
+      ref: feat/link_preview_v2
   flutter_link_previewer:
     path: ../
 

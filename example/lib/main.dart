@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
+import 'package:flutter_chat_core/flutter_chat_core.dart' show LinkPreviewData;
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 
 void main() {
@@ -25,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Map<String, PreviewData> datas = {};
+  Map<String, LinkPreviewData?> datas = {};
 
   List<String> get urls => const [
         'github.com/flyerhq',
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               child: LinkPreview(
                 enableAnimation: true,
-                onPreviewDataFetched: (data) {
+                onLinkPreviewDataFetched: (data) {
                   setState(() {
                     datas = {
                       ...datas,
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     };
                   });
                 },
-                previewData: datas[urls[index]],
+                linkPreviewData: datas[urls[index]],
                 text: urls[index],
                 width: MediaQuery.of(context).size.width,
               ),

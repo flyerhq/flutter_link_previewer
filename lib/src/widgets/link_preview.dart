@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
+import 'package:flutter_chat_core/flutter_chat_core.dart' show LinkPreviewData;
 import 'package:flutter_linkify/flutter_linkify.dart' hide UrlLinkifier;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../url_linkifier.dart' show UrlLinkifier;
-import '../utils.dart' show getPreviewData;
+import '../utils.dart' show getLinkPreviewData;
 
 /// A widget that renders text with highlighted links.
 /// Eventually unwraps to the full preview of the first found link
@@ -25,12 +25,12 @@ class LinkPreview extends StatefulWidget {
     this.metadataTextStyle,
     this.metadataTitleStyle,
     this.onLinkPressed,
-    required this.onPreviewDataFetched,
+    required this.onLinkPreviewDataFetched,
     this.openOnPreviewImageTap = false,
     this.openOnPreviewTitleTap = false,
     this.padding,
     this.previewBuilder,
-    required this.previewData,
+    this.linkPreviewData,
     this.requestTimeout,
     required this.text,
     this.textStyle,
@@ -72,11 +72,11 @@ class LinkPreview extends StatefulWidget {
   /// Custom link press handler.
   final void Function(String)? onLinkPressed;
 
-  /// Callback which is called when [PreviewData] was successfully parsed.
-  /// Use it to save [PreviewData] to the state and pass it back
-  /// to the [LinkPreview.previewData] so the [LinkPreview] would not fetch
+  /// Callback which is called when [LinkPreviewData] was successfully parsed.
+  /// Use it to save [LinkPreviewData] to the state and pass it back
+  /// to the [LinkPreview.LinkPreviewData] so the [LinkPreview] would not fetch
   /// preview data again.
-  final void Function(PreviewData) onPreviewDataFetched;
+  final void Function(LinkPreviewData?) onLinkPreviewDataFetched;
 
   /// Open the link when the link preview image is tapped. Defaults to false.
   final bool openOnPreviewImageTap;
@@ -88,11 +88,11 @@ class LinkPreview extends StatefulWidget {
   final EdgeInsets? padding;
 
   /// Function that allows you to build a custom link preview.
-  final Widget Function(BuildContext, PreviewData)? previewBuilder;
+  final Widget Function(BuildContext, LinkPreviewData)? previewBuilder;
 
-  /// Pass saved [PreviewData] here so [LinkPreview] would not fetch preview
+  /// Pass saved [LinkPreviewData] here so [LinkPreview] would not fetch preview
   /// data again.
-  final PreviewData? previewData;
+  final LinkPreviewData? linkPreviewData;
 
   /// Request timeout after which the request will be cancelled. Defaults to 5 seconds.
   final Duration? requestTimeout;
@@ -118,7 +118,7 @@ class LinkPreview extends StatefulWidget {
 
 class _LinkPreviewState extends State<LinkPreview>
     with SingleTickerProviderStateMixin {
-  bool isFetchingPreviewData = false;
+  bool isFetchingLinkPreviewData = false;
   bool shouldAnimate = false;
 
   late final Animation<double> _animation;
@@ -148,7 +148,7 @@ class _LinkPreviewState extends State<LinkPreview>
         child: child,
       );
 
-  Widget _bodyWidget(PreviewData data, double width) {
+  Widget _bodyWidget(LinkPreviewData data, double width) {
     final padding = widget.padding ??
         const EdgeInsets.only(
           bottom: 16,
@@ -160,8 +160,7 @@ class _LinkPreviewState extends State<LinkPreview>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         GestureDetector(
-          onTap:
-              widget.openOnPreviewTitleTap ? () => _onOpen(data.link!) : null,
+          onTap: widget.openOnPreviewTitleTap ? () => _onOpen(data.link) : null,
           child: Container(
             padding: EdgeInsets.only(
               bottom: padding.bottom,
@@ -248,43 +247,45 @@ class _LinkPreviewState extends State<LinkPreview>
         ),
       );
 
-  Future<PreviewData> _fetchData(String text) async {
+  Future<LinkPreviewData?> _fetchData(String text) async {
     setState(() {
-      isFetchingPreviewData = true;
+      isFetchingLinkPreviewData = true;
     });
 
-    final previewData = await getPreviewData(
+    final linkPreviewData = await getLinkPreviewData(
       text,
       proxy: widget.corsProxy,
       requestTimeout: widget.requestTimeout,
       userAgent: widget.userAgent,
     );
-    await _handlePreviewDataFetched(previewData);
-    return previewData;
+    await _handleLinkPreviewDataFetched(linkPreviewData);
+    return linkPreviewData;
   }
 
-  Future<void> _handlePreviewDataFetched(PreviewData previewData) async {
+  Future<void> _handleLinkPreviewDataFetched(
+    LinkPreviewData? linkPreviewData,
+  ) async {
     await Future.delayed(
       widget.animationDuration ?? const Duration(milliseconds: 300),
     );
 
     if (mounted) {
-      widget.onPreviewDataFetched(previewData);
+      widget.onLinkPreviewDataFetched(linkPreviewData);
       setState(() {
-        isFetchingPreviewData = false;
+        isFetchingLinkPreviewData = false;
       });
     }
   }
 
-  bool _hasData(PreviewData? previewData) =>
-      previewData?.title != null ||
-      previewData?.description != null ||
-      previewData?.image?.url != null;
+  bool _hasData(LinkPreviewData? linkPreviewData) =>
+      linkPreviewData?.title != null ||
+      linkPreviewData?.description != null ||
+      linkPreviewData?.image != null;
 
   bool _hasOnlyImage() =>
-      widget.previewData?.title == null &&
-      widget.previewData?.description == null &&
-      widget.previewData?.image?.url != null;
+      widget.linkPreviewData?.title == null &&
+      widget.linkPreviewData?.description == null &&
+      widget.linkPreviewData?.image != null;
 
   Widget _imageWidget(String imageUrl, String linkUrl, double width) =>
       GestureDetector(
@@ -318,7 +319,7 @@ class _LinkPreviewState extends State<LinkPreview>
         style: widget.textStyle,
       );
 
-  Widget _minimizedBodyWidget(PreviewData data) => Column(
+  Widget _minimizedBodyWidget(LinkPreviewData data) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (data.title != null || data.description != null)
@@ -330,7 +331,7 @@ class _LinkPreviewState extends State<LinkPreview>
                   Expanded(
                     child: GestureDetector(
                       onTap: widget.openOnPreviewTitleTap
-                          ? () => _onOpen(data.link!)
+                          ? () => _onOpen(data.link)
                           : null,
                       child: Container(
                         margin: const EdgeInsets.only(right: 4),
@@ -346,7 +347,7 @@ class _LinkPreviewState extends State<LinkPreview>
                     ),
                   ),
                   if (data.image?.url != null && widget.hideImage != true)
-                    _minimizedImageWidget(data.image!.url, data.link!),
+                    _minimizedImageWidget(data.image!.url, data.link),
                 ],
               ),
             ),
@@ -398,17 +399,17 @@ class _LinkPreviewState extends State<LinkPreview>
   void didUpdateWidget(covariant LinkPreview oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (!isFetchingPreviewData && widget.previewData == null) {
+    if (!isFetchingLinkPreviewData && widget.linkPreviewData == null) {
       _fetchData(widget.text);
     }
 
-    if (widget.previewData != null && oldWidget.previewData == null) {
+    if (widget.linkPreviewData != null && oldWidget.linkPreviewData == null) {
       setState(() {
         shouldAnimate = true;
       });
       _controller.reset();
       _controller.forward();
-    } else if (widget.previewData != null) {
+    } else if (widget.linkPreviewData != null) {
       setState(() {
         shouldAnimate = false;
       });
@@ -423,24 +424,24 @@ class _LinkPreviewState extends State<LinkPreview>
 
   @override
   Widget build(BuildContext context) {
-    final previewData = widget.previewData;
+    final linkPreviewData = widget.linkPreviewData;
 
-    if (previewData != null && _hasData(previewData)) {
+    if (linkPreviewData != null && _hasData(linkPreviewData)) {
       if (widget.previewBuilder != null) {
-        return widget.previewBuilder!(context, previewData);
+        return widget.previewBuilder!(context, linkPreviewData);
       } else {
-        final aspectRatio = widget.previewData!.image == null
+        final aspectRatio = widget.linkPreviewData!.image == null
             ? null
-            : widget.previewData!.image!.width /
-                widget.previewData!.image!.height;
+            : widget.linkPreviewData!.image!.width /
+                widget.linkPreviewData!.image!.height;
 
         final width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
         return _containerWidget(
           animate: shouldAnimate,
           child: aspectRatio == 1
-              ? _minimizedBodyWidget(previewData)
-              : _bodyWidget(previewData, width),
+              ? _minimizedBodyWidget(linkPreviewData)
+              : _bodyWidget(linkPreviewData, width),
           withPadding: aspectRatio == 1,
         );
       }

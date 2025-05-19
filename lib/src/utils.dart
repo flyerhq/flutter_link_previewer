@@ -3,12 +3,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart' hide Element;
-import 'package:flutter_chat_types/flutter_chat_types.dart'
-    show PreviewData, PreviewDataImage;
+import 'package:flutter_chat_core/flutter_chat_core.dart'
+    show LinkPreviewData, ImagePreviewData;
 import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
-import 'dart:ui' as ui;
 
 import 'types.dart';
 
@@ -167,32 +166,26 @@ Future<String> _getBiggestImageUrl(
 }
 
 /// Parses provided text and returns [PreviewData] for the first found link.
-Future<PreviewData> getPreviewData(
+Future<LinkPreviewData?> getLinkPreviewData(
   String text, {
   String? proxy,
   Duration? requestTimeout,
   String? userAgent,
 }) async {
-  const previewData = PreviewData();
-
   String? previewDataDescription;
-  PreviewDataImage? previewDataImage;
   String? previewDataTitle;
   String? previewDataUrl;
+  ImagePreviewData? previewDataImage;
 
   try {
     final emailRegexp = RegExp(regexEmail, caseSensitive: false);
-    final textWithoutEmails = text
-        .replaceAllMapped(
-          emailRegexp,
-          (match) => '',
-        )
-        .trim();
-    if (textWithoutEmails.isEmpty) return previewData;
+    final textWithoutEmails =
+        text.replaceAllMapped(emailRegexp, (match) => '').trim();
+    if (textWithoutEmails.isEmpty) return null;
 
     final urlRegexp = RegExp(regexLink, caseSensitive: false);
     final matches = urlRegexp.allMatches(textWithoutEmails);
-    if (matches.isEmpty) return previewData;
+    if (matches.isEmpty) return null;
 
     var url = textWithoutEmails.substring(
       matches.first.start,
@@ -212,21 +205,19 @@ Future<PreviewData> getPreviewData(
 
     if (imageRegexp.hasMatch(response.headers['content-type'] ?? '')) {
       final imageSize = await _getImageSizeFromBytes(response.bodyBytes);
-
-      previewDataImage = PreviewDataImage(
-        height: imageSize.height,
-        url: previewDataUrl,
-        width: imageSize.width,
-      );
-      return PreviewData(
-        image: previewDataImage,
-        link: previewDataUrl,
+      return LinkPreviewData(
+        link: url,
+        image: ImagePreviewData(
+          url: url,
+          height: imageSize.height,
+          width: imageSize.width,
+        ),
       );
     }
 
     final document = parser.parse(utf8.decode(response.bodyBytes));
     if (!_hasUTF8Charset(document)) {
-      return previewData;
+      return LinkPreviewData(link: url);
     }
 
     final title = _getTitle(document);
@@ -242,33 +233,28 @@ Future<PreviewData> getPreviewData(
     final imageUrls = _getImageUrls(document, url);
 
     Size imageSize;
-    String imageUrl;
+    String previewDataImageUrl;
 
     if (imageUrls.isNotEmpty) {
-      imageUrl = imageUrls.length == 1
+      previewDataImageUrl = imageUrls.length == 1
           ? _calculateUrl(imageUrls[0], proxy)
           : await _getBiggestImageUrl(imageUrls, proxy);
 
-      imageSize = await _getImageSize(imageUrl);
-      previewDataImage = PreviewDataImage(
-        height: imageSize.height,
-        url: imageUrl,
+      imageSize = await _getImageSize(previewDataImageUrl);
+      previewDataImage = ImagePreviewData(
+        url: previewDataImageUrl,
         width: imageSize.width,
+        height: imageSize.height,
       );
     }
-    return PreviewData(
-      description: previewDataDescription,
-      image: previewDataImage,
+    return LinkPreviewData(
       link: previewDataUrl,
       title: previewDataTitle,
+      description: previewDataDescription,
+      image: previewDataImage,
     );
   } catch (e) {
-    return PreviewData(
-      description: previewDataDescription,
-      image: previewDataImage,
-      link: previewDataUrl,
-      title: previewDataTitle,
-    );
+    return null;
   }
 }
 

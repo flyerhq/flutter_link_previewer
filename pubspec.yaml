@@ -14,7 +14,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_chat_types: ^3.6.2
+  flutter_chat_core:
+    # TODO link to correct chat_core version once release
+    git:
+      url: git@github.com:nicolasbraun/flutter_chat_ui
+      path: packages/flutter_chat_core
+      ref: feat/link_preview_v2
   flutter_linkify: ^6.0.0
   html: ^0.15.4
   http: '>=0.13.6 <2.0.0'
