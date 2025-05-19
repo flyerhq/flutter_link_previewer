@@ -19,7 +19,9 @@ class LinkPreview extends StatefulWidget {
     this.enableAnimation = false,
     this.header,
     this.headerStyle,
-    this.hideImage,
+    this.hideImage = false,
+    this.hideTitle = false,
+    this.hideDescription = false,
     this.imageBuilder,
     this.linkStyle,
     this.metadataTextStyle,
@@ -56,6 +58,12 @@ class LinkPreview extends StatefulWidget {
 
   /// Hides image data from the preview.
   final bool? hideImage;
+
+  /// Hides title data from the preview.
+  final bool? hideTitle;
+
+  /// Hides description data from the preview.
+  final bool? hideDescription;
 
   /// Function that allows you to build a custom image.
   final Widget Function(String)? imageBuilder;
@@ -170,15 +178,16 @@ class _LinkPreviewState extends State<LinkPreview>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                if (data.title != null) _titleWidget(data.title!),
-                if (data.description != null)
+                if (data.title != null && widget.hideTitle == false)
+                  _titleWidget(data.title!),
+                if (data.description != null && widget.hideDescription == false)
                   _descriptionWidget(data.description!),
               ],
             ),
           ),
         ),
-        if (data.image?.url != null && widget.hideImage != true)
-          _imageWidget(data.image!.url, data.link!, width),
+        if (data.image != null && widget.hideImage == false)
+          _imageWidget(data.image!.url, data.link, width),
       ],
     );
   }
@@ -346,7 +355,7 @@ class _LinkPreviewState extends State<LinkPreview>
                       ),
                     ),
                   ),
-                  if (data.image?.url != null && widget.hideImage != true)
+                  if (data.image != null && widget.hideImage != true)
                     _minimizedImageWidget(data.image!.url, data.link),
                 ],
               ),
