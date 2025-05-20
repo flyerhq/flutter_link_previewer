@@ -208,25 +208,34 @@ class _LinkPreviewState extends State<LinkPreview>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ShrinkableColumn(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
             padding: applyPaddingToChild
                 ? EdgeInsets.zero
                 : padding.copyWith(
-                    bottom: widget.spaceBetweenTopWidgetsAndPreview,
+                    bottom: topWidgets.isNotEmpty
+                        ? widget.spaceBetweenTopWidgetsAndPreview
+                        : 0,
+
+                    /// Don't add padding to the top for images only
+                    top: (_hasOnlyImage() && topWidgets.isEmpty)
+                        ? 0
+                        : padding.top,
                   ),
-            children: [
-              ..._topWidgets(),
-              if (applyPaddingToChild && child != null)
-                Padding(
-                  padding: topWidgets.isNotEmpty
-                      ? EdgeInsets.only(
-                          top: widget.spaceBetweenTopWidgetsAndPreview,
-                        )
-                      : EdgeInsets.zero,
-                  child: shouldAnimate ? _animated(child) : child,
-                ),
-            ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ..._topWidgets(),
+                if (applyPaddingToChild && child != null)
+                  Padding(
+                    padding: topWidgets.isNotEmpty
+                        ? EdgeInsets.only(
+                            top: widget.spaceBetweenTopWidgetsAndPreview,
+                          )
+                        : EdgeInsets.zero,
+                    child: shouldAnimate ? _animated(child) : child,
+                  ),
+              ],
+            ),
           ),
           if (!applyPaddingToChild && child != null)
             shouldAnimate ? _animated(child) : child,
@@ -279,6 +288,11 @@ class _LinkPreviewState extends State<LinkPreview>
       linkPreviewData?.title != null ||
       linkPreviewData?.description != null ||
       linkPreviewData?.image != null;
+
+  bool _hasOnlyImage() =>
+      (widget.linkPreviewData?.title == null || widget.hideTitle) &&
+      (widget.linkPreviewData?.description == null || widget.hideDescription) &&
+      widget.linkPreviewData?.image != null;
 
   Widget _imageWidget(String imageUrl, String linkUrl) => GestureDetector(
         onTap: widget.openOnPreviewImageTap ? () => _onOpen(linkUrl) : null,
