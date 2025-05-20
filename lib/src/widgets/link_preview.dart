@@ -42,7 +42,7 @@ class LinkPreview extends StatefulWidget {
     this.textStyle,
     this.textWidget,
     this.userAgent,
-    required this.width,
+    this.width = double.infinity,
     this.spaceBetweenTopWidgetsAndPreview = 16,
   });
 
@@ -188,7 +188,7 @@ class _LinkPreviewState extends State<LinkPreview>
             ),
           ),
           if (data.image != null && !widget.hideImage)
-            _imageWidget(data.image!.url, data.link, width),
+            _imageWidget(data.image!.url, data.link),
         ],
       );
 
@@ -280,20 +280,22 @@ class _LinkPreviewState extends State<LinkPreview>
       linkPreviewData?.description != null ||
       linkPreviewData?.image != null;
 
-  Widget _imageWidget(String imageUrl, String linkUrl, double width) =>
-      GestureDetector(
+  Widget _imageWidget(String imageUrl, String linkUrl) => GestureDetector(
         onTap: widget.openOnPreviewImageTap ? () => _onOpen(linkUrl) : null,
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: width,
+        child: Center(
+          child: LayoutBuilder(
+            builder: (context, constraints) => Container(
+              constraints: BoxConstraints(
+                maxHeight: math.min(widget.width, constraints.maxWidth),
+              ),
+              child: widget.imageBuilder != null
+                  ? widget.imageBuilder!(imageUrl)
+                  : Image.network(
+                      imageUrl,
+                      fit: BoxFit.contain,
+                    ),
+            ),
           ),
-          width: width,
-          child: widget.imageBuilder != null
-              ? widget.imageBuilder!(imageUrl)
-              : Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain,
-                ),
         ),
       );
 
@@ -442,7 +444,6 @@ class _LinkPreviewState extends State<LinkPreview>
             : widget.linkPreviewData!.image!.width /
                 widget.linkPreviewData!.image!.height;
 
-        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
         final useRowBodyWidget =
             aspectRatio == 1 && !(widget.hideTitle && widget.hideDescription);
 
@@ -450,7 +451,7 @@ class _LinkPreviewState extends State<LinkPreview>
           animate: shouldAnimate,
           child: useRowBodyWidget
               ? _minimizedBodyWidget(linkPreviewData)
-              : _bodyWidget(linkPreviewData, width),
+              : _bodyWidget(linkPreviewData),
           applyPaddingToChild: useRowBodyWidget,
         );
       }
