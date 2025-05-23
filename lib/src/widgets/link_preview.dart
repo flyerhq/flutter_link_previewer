@@ -470,7 +470,7 @@ class _LinkPreviewState extends State<LinkPreview>
         );
       }
     } else {
-      return _containerWidget(animate: false);
+      return const SizedBox.shrink();
     }
   }
 }
