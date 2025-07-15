@@ -1,3 +1,4 @@
+import 'package:example/testing_cache_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' show PreviewData;
@@ -36,8 +37,23 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            ElevatedButton(
+              child: const Text('Testing Cache Feature =>'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const TestingCacheScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       backgroundColor: Colors.white,
       body: ListView.builder(
         itemCount: urls.length,
@@ -58,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               child: LinkPreview(
                 enableAnimation: true,
+                // enableCaching: false,
                 onPreviewDataFetched: (data) {
                   setState(() {
                     datas = {
