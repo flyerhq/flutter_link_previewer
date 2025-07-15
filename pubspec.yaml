@@ -21,6 +21,7 @@ dependencies:
   linkify: ^5.0.0
   meta: '>=1.8.0 <2.0.0'
   url_launcher: ^6.1.12
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   dart_code_metrics: ^5.7.5
