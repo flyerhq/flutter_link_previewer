@@ -425,25 +425,26 @@ class _LinkPreviewState extends State<LinkPreview>
   Widget build(BuildContext context) {
     final previewData = widget.previewData;
 
-    if (previewData != null && _hasData(previewData)) {
-      if (widget.previewBuilder != null) {
-        return widget.previewBuilder!(context, previewData);
-      } else {
-        final aspectRatio = widget.previewData!.image == null
-            ? null
-            : widget.previewData!.image!.width /
-                widget.previewData!.image!.height;
+    if (previewData != null && widget.previewBuilder != null) {
+      return widget.previewBuilder!(context, previewData);
+    }
+    if (previewData != null &&
+        _hasData(previewData) &&
+        widget.previewBuilder == null) {
+      final aspectRatio = widget.previewData!.image == null
+          ? null
+          : widget.previewData!.image!.width /
+              widget.previewData!.image!.height;
 
-        final width = aspectRatio == 1 ? widget.width : widget.width - 32;
+      final width = aspectRatio == 1 ? widget.width : widget.width - 32;
 
-        return _containerWidget(
-          animate: shouldAnimate,
-          child: aspectRatio == 1
-              ? _minimizedBodyWidget(previewData)
-              : _bodyWidget(previewData, width),
-          withPadding: aspectRatio == 1,
-        );
-      }
+      return _containerWidget(
+        animate: shouldAnimate,
+        child: aspectRatio == 1
+            ? _minimizedBodyWidget(previewData)
+            : _bodyWidget(previewData, width),
+        withPadding: aspectRatio == 1,
+      );
     } else {
       return _containerWidget(animate: false);
     }
