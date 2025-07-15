@@ -8,8 +8,8 @@ import 'package:flutter_chat_types/flutter_chat_types.dart'
 import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
-import 'dart:ui' as ui;
 
+import 'cache_helper.dart';
 import 'types.dart';
 
 String _calculateUrl(String baseUrl, String? proxy) {
@@ -172,8 +172,10 @@ Future<PreviewData> getPreviewData(
   String? proxy,
   Duration? requestTimeout,
   String? userAgent,
+  required bool enableCaching,
+  required Duration cachingDuration,
 }) async {
-  const previewData = PreviewData();
+  var previewData = const PreviewData();
 
   String? previewDataDescription;
   PreviewDataImage? previewDataImage;
@@ -181,6 +183,15 @@ Future<PreviewData> getPreviewData(
   String? previewDataUrl;
 
   try {
+    /// Check if the link is cached before and if the caching duration is still valid:
+    final result = await CacheHelper.getCachedPreviewData(
+      key: text,
+    );
+    if (result != null) {
+      return PreviewData.fromJson(result);
+    }
+
+    ///
     final emailRegexp = RegExp(regexEmail, caseSensitive: false);
     final textWithoutEmails = text
         .replaceAllMapped(
@@ -256,12 +267,23 @@ Future<PreviewData> getPreviewData(
         width: imageSize.width,
       );
     }
-    return PreviewData(
+
+    previewData = PreviewData(
       description: previewDataDescription,
       image: previewDataImage,
       link: previewDataUrl,
       title: previewDataTitle,
     );
+
+    /// Cache the result :
+    if (enableCaching) {
+      CacheHelper.cacheLink(
+        key: text,
+        value: previewData.toJson(),
+        cachingDuration: cachingDuration,
+      );
+    }
+    return previewData;
   } catch (e) {
     return PreviewData(
       description: previewDataDescription,
