@@ -15,6 +15,8 @@ class LinkPreview extends StatefulWidget {
   const LinkPreview({
     super.key,
     this.animationDuration,
+    this.enableCaching = true,
+    this.cachingDuration = const Duration(days: 1),
     this.corsProxy,
     this.enableAnimation = false,
     this.header,
@@ -41,6 +43,12 @@ class LinkPreview extends StatefulWidget {
 
   /// Expand animation duration.
   final Duration? animationDuration;
+
+  /// If true, links will be cached based on the [cachingDuration]. It is true by default.
+  final bool enableCaching;
+
+  /// Caching duration in case of [enableCaching] is ture, it is (1 day) by default.
+  final Duration cachingDuration;
 
   /// CORS proxy to make more previews work on web. Not tested.
   final String? corsProxy;
@@ -138,7 +146,7 @@ class _LinkPreviewState extends State<LinkPreview>
       curve: Curves.easeOutQuad,
     );
 
-    didUpdateWidget(widget);
+    _fetchData(widget.text);
   }
 
   Widget _animated(Widget child) => SizeTransition(
@@ -248,16 +256,19 @@ class _LinkPreviewState extends State<LinkPreview>
         ),
       );
 
-  Future<PreviewData> _fetchData(String text) async {
+  Future<PreviewData> _fetchData(
+    String text,
+  ) async {
     setState(() {
       isFetchingPreviewData = true;
     });
-
     final previewData = await getPreviewData(
       text,
       proxy: widget.corsProxy,
       requestTimeout: widget.requestTimeout,
       userAgent: widget.userAgent,
+      enableCaching: widget.enableCaching,
+      cachingDuration: widget.cachingDuration,
     );
     await _handlePreviewDataFetched(previewData);
     return previewData;
@@ -398,17 +409,23 @@ class _LinkPreviewState extends State<LinkPreview>
   void didUpdateWidget(covariant LinkPreview oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (!isFetchingPreviewData && widget.previewData == null) {
+    /// Refetch preview data if the text (URL) changes
+    if (widget.text != oldWidget.text && !isFetchingPreviewData) {
       _fetchData(widget.text);
     }
 
-    if (widget.previewData != null && oldWidget.previewData == null) {
+    /// Animate if previewData became available
+    if (widget.enableAnimation != null &&
+        widget.enableAnimation == true &&
+        widget.previewData != null &&
+        oldWidget.previewData == null) {
       setState(() {
         shouldAnimate = true;
       });
       _controller.reset();
       _controller.forward();
-    } else if (widget.previewData != null) {
+    } else if (widget.previewData != null &&
+        widget.previewData != oldWidget.previewData) {
       setState(() {
         shouldAnimate = false;
       });
